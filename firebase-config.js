@@ -13,7 +13,7 @@ export const firebaseConfig = {
   projectId: "barque-plus",
   storageBucket: "barque-plus.firebasestorage.app",
   messagingSenderId: "228445948239",
-  appId: "1:228445948239:web:2be142bd4eea503e785d3a",
+  appId: "1:228445948239:web:2be142bd4eea503e785d3a"
 };
 
 // The Firebase version every page loads. Change it here only.
