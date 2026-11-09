@@ -8,12 +8,12 @@
 // ============================================================
 
 export const firebaseConfig = {
-  apiKey: "PASTE_HERE",
-  authDomain: "PASTE_HERE",
-  projectId: "PASTE_HERE",
-  storageBucket: "PASTE_HERE",
-  messagingSenderId: "PASTE_HERE",
-  appId: "PASTE_HERE",
+  apiKey: "AIzaSyC27NyQQ_hoVLb-i8D4mXqQrGkQF5-YnBk",
+  authDomain: "barque-plus.firebaseapp.com",
+  projectId: "barque-plus",
+  storageBucket: "barque-plus.firebasestorage.app",
+  messagingSenderId: "228445948239",
+  appId: "1:228445948239:web:2be142bd4eea503e785d3a",
 };
 
 // The Firebase version every page loads. Change it here only.
