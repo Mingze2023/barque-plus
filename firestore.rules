@@ -1,0 +1,33 @@
+// ============================================================
+// Barque+ Firestore security rules
+//
+// These decide who can read and write what. They run on Google's
+// side, so nobody can get around them by editing the website.
+//
+// This file is just a copy for your records. To make rules take
+// effect, paste the whole file into:
+//   Firebase console > Firestore Database > Rules tab > Publish
+// ============================================================
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // STEP 1 ONLY (temporary): the setup-check page.
+    // Anyone can read test messages and add short new ones,
+    // but nobody can edit or delete them. Step 3 removes this.
+    match /connectionTest/{docId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['message', 'createdAt'])
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() <= 100
+                    && request.resource.data.createdAt == request.time;
+    }
+
+    // Everything else is locked until later steps open it up.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
