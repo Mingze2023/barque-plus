@@ -302,3 +302,248 @@ html, body {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* ============================================================
+   Logged in / logged out (Step 3: accounts)
+   ============================================================ */
+
+/* While checking whether you're logged in, show nothing (avoids a flash) */
+body.checking .app { visibility: hidden; }
+
+/* Logged out: no website at all, only the right sidebar */
+body.logged-out .sidebar-left,
+body.logged-out .main > * { display: none; }
+body.logged-out .sidebar-right { width: 320px; }
+body.logged-out .sidebar-right .collapse-btn { display: none; }
+body.logged-out .sidebar-right.collapsed .fade-label { opacity: 1; pointer-events: auto; }
+
+body.logged-out .only-logged-in { display: none !important; }
+body.logged-in  .only-logged-out { display: none !important; }
+
+.profile-name {
+  margin-top: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-name + .profile-type { margin-top: 6px; }
+.sidebar-right.collapsed .profile-name { height: 0; margin: 0; }
+
+.sidebar-bottom {
+  padding: 16px;
+  border-top: 1px solid var(--yellow-100);
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary,
+.btn-outline {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+.btn-primary {
+  border: none;
+  background: var(--yellow-500);
+  color: var(--brown-900);
+}
+.btn-primary:hover { background: var(--yellow-400); box-shadow: 0 3px 10px rgba(242, 183, 5, 0.4); }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:disabled { opacity: 0.6; cursor: wait; }
+
+.btn-outline {
+  border: 2px solid var(--brown-300);
+  background: transparent;
+  color: var(--brown-600);
+}
+.btn-outline:hover { border-color: var(--accent-red); color: var(--accent-red); }
+
+.link-btn {
+  border: none;
+  background: none;
+  padding: 4px;
+  color: var(--accent-teal);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.link-btn:hover { text-decoration: underline; }
+
+/* ---------- Login / create account panel ---------- */
+.auth {
+  padding: 8px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+.auth-brand {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2.4rem;
+  text-align: center;
+  margin-top: 12px;
+}
+.auth-welcome {
+  text-align: center;
+  color: var(--brown-600);
+  margin: 4px 0 20px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: var(--yellow-100);
+  border-radius: 12px;
+}
+.auth-tab {
+  flex: 1;
+  height: 38px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--brown-600);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.auth-tab:hover { color: var(--brown-900); }
+.auth-tab.active {
+  background: var(--brown-800);
+  color: var(--white);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  animation: slideDown 0.3s var(--ease);
+}
+.auth-form[hidden] { display: none; }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+.auth-heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--brown-600);
+}
+.field input {
+  height: 42px;
+  padding: 0 12px;
+  border: 2px solid var(--brown-300);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--brown-900);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--yellow-500);
+  box-shadow: 0 0 0 3px rgba(242, 183, 5, 0.3);
+}
+.field[hidden] { display: none; }
+
+.username-preview {
+  margin-top: -6px;
+  font-size: 0.85rem;
+  color: var(--accent-teal);
+  min-height: 0;
+}
+.username-preview:empty { display: none; }
+
+.form-error {
+  margin: 0;
+  color: #d32f2f;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.form-error:empty { display: none; }
+
+/* ---------- Messages ---------- */
+.code-note {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(31, 158, 143, 0.1);
+  border-left: 4px solid var(--accent-teal);
+  font-size: 0.9rem;
+  color: var(--brown-800);
+  line-height: 1.4;
+}
+.form-success {
+  margin: 0;
+  color: var(--accent-teal);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.form-success:empty { display: none; }
+.auth-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+}
+.auth-links [hidden] { display: none; }
+
+/* ---------- Waiting for email verification ---------- */
+.verify {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+  animation: slideDown 0.3s var(--ease);
+}
+.verify[hidden] { display: none; }
+#authChooser[hidden] { display: none; }
+
+/* ---------- Page that opens from email links (auth-action.html) ---------- */
+body.action-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 64px 16px;
+}
+.action-card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px 28px 32px;
+  background: var(--white);
+  border-radius: 16px;
+  border-top: 5px solid var(--yellow-500);
+  box-shadow: 0 4px 18px rgba(58, 36, 20, 0.1);
+}
+.action-card .auth-brand { margin-top: 0; }
+.action-card .auth-form { margin-top: 0; }
+.action-card [hidden] { display: none !important; }
+.btn-link {
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+}

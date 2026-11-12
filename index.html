@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="checking">
   <div class="app">
 
     <!-- ============ LEFT SIDEBAR: sections menu ============ -->
@@ -52,19 +52,84 @@
         </button>
       </div>
 
-      <div class="profile">
+      <!-- ===== Shown when logged in ===== -->
+      <div class="profile only-logged-in">
         <button class="avatar" id="avatarBtn" title="Click to change icon" aria-label="Change profile icon">
           <!-- Icon drawn by js/app.js -->
         </button>
+        <div class="profile-name fade-label" id="profileName"></div>
         <div class="profile-type fade-label" id="profileType">Profile Type</div>
       </div>
 
-      <!-- Empty for now: later steps add things here (log in, editor mode switch, etc.) -->
-      <div class="sidebar-slot fade-label" id="rightSlot"></div>
+      <!-- Later steps add things here (editor mode switch, etc.) -->
+      <div class="sidebar-slot fade-label only-logged-in" id="rightSlot"></div>
+
+      <div class="sidebar-bottom fade-label only-logged-in">
+        <button class="btn-outline" id="logoutBtn">Log Out</button>
+      </div>
+
+      <!-- ===== Shown when logged out ===== -->
+      <div class="auth only-logged-out">
+        <div class="auth-brand">Barque<span class="plus">+</span></div>
+        <p class="auth-welcome" id="authWelcome">Log in with your school account to continue.</p>
+
+        <!-- Shown if Firebase can't be reached -->
+        <p class="form-error" id="startupError" role="alert"></p>
+
+        <!-- Log In / Create Account -->
+        <div id="authChooser">
+          <div class="auth-tabs">
+            <button class="auth-tab" data-mode="login">Log In</button>
+            <button class="auth-tab" data-mode="register">Create Account</button>
+          </div>
+
+          <form class="auth-form" id="authForm" novalidate hidden>
+            <h3 class="auth-heading" id="authHeading"></h3>
+
+            <label class="field">
+              <span>Email</span>
+              <input type="email" id="authEmail" placeholder="you@bsd405.org" autocomplete="username">
+            </label>
+            <div class="username-preview" id="usernamePreview"></div>
+
+            <label class="field" id="passwordField">
+              <span id="passwordLabel">Password</span>
+              <input type="password" id="authPassword" autocomplete="current-password">
+            </label>
+
+            <label class="field" id="confirmField">
+              <span>Type password again</span>
+              <input type="password" id="authConfirm" autocomplete="new-password">
+            </label>
+
+            <p class="form-error" id="authError" role="alert"></p>
+            <p class="form-success" id="authSuccess" role="status"></p>
+
+            <button type="submit" class="btn-primary" id="authSubmit">Log In</button>
+
+            <div class="auth-links">
+              <button type="button" class="link-btn" id="forgotBtn">Forgot password?</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Waiting for the person to click the link in their email -->
+        <div class="verify" id="verifyPanel" hidden>
+          <h3 class="auth-heading">Check your email</h3>
+          <p class="code-note" id="verifyNote"></p>
+          <p class="form-error" id="verifyError" role="alert"></p>
+          <p class="form-success" id="verifySuccess" role="status"></p>
+          <button class="btn-primary" id="verifyDoneBtn">I've clicked the link</button>
+          <div class="auth-links">
+            <button type="button" class="link-btn" id="verifyResendBtn">Resend link</button>
+            <button type="button" class="link-btn" id="verifyLogoutBtn">Use a different account</button>
+          </div>
+        </div>
+      </div>
     </aside>
 
   </div>
 
-  <script src="js/app.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>

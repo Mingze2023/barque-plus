@@ -13,16 +13,42 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // STEP 1 ONLY (temporary): the setup-check page.
-    // Anyone can read test messages and add short new ones,
-    // but nobody can edit or delete them. Step 3 removes this.
-    match /connectionTest/{docId} {
-      allow read: if true;
-      allow create: if request.resource.data.keys().hasOnly(['message', 'createdAt'])
-                    && request.resource.data.message is string
-                    && request.resource.data.message.size() > 0
-                    && request.resource.data.message.size() <= 100
-                    && request.resource.data.createdAt == request.time;
+    // ---------- Who counts as a Barque+ user ----------
+    // Logged in, with a verified @bsd405.org email.
+    function isSchoolUser() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower().matches('.*@bsd405[.]org$');
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // ---------- User profiles: users/{userId} ----------
+    match /users/{userId} {
+      // Any Barque+ user can see profiles (needed later for usernames and roles)
+      allow read: if isSchoolUser();
+
+      // You can create only your own profile, only once, only as a Student,
+      // and only with the username and email that match your account.
+      allow create: if isSchoolUser()
+        && isOwner(userId)
+        && request.resource.data.keys().hasOnly(['username', 'email', 'profileType', 'avatar', 'createdAt'])
+        && request.resource.data.profileType == 'Student'
+        && request.resource.data.email == request.auth.token.email.lower()
+        && request.resource.data.username == request.auth.token.email.lower().split('@')[0]
+        && request.resource.data.avatar in ['male', 'female']
+        && request.resource.data.createdAt == request.time;
+
+      // After that, the only thing you can change is your profile icon.
+      // Changing Profile Types will be added for editors in Step 14.
+      allow update: if isSchoolUser()
+        && isOwner(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avatar'])
+        && request.resource.data.avatar in ['male', 'female'];
+
+      allow delete: if false;
     }
 
     // Everything else is locked until later steps open it up.

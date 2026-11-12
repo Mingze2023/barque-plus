@@ -1,4 +1,4 @@
-# Barque+ Step 1 setup (no terminal needed)
+# Barque+ setup (no terminal needed)
 
 Works from a school Windows computer or a Mac. Takes about 20 minutes.
 Button names on GitHub and Firebase sometimes change slightly; look for the closest match.
@@ -16,7 +16,7 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
    - Under **Source**, choose **Deploy from a branch**
    - Under **Branch**, choose **main** and **/ (root)**, then click **Save**
    - Wait 1 to 2 minutes and refresh. The page shows "Your site is live at `https://YOUR-USERNAME.github.io/barque-plus/`".
-5. **Open that link.** You should see the Barque+ checklist. The first two checks are green and "Firebase settings filled in" is red. That's expected.
+5. **Open that link.** The page will say Firebase settings are missing until you finish Part C. That's expected.
 
 ## Part B: Firebase (accounts and the database)
 
@@ -43,21 +43,30 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 10. **Open the code editor.** On your GitHub repository page, press the **`.`** (period) key. This opens github.dev, which is VS Code in your browser.
 11. **Paste your settings.** Open `js/firebase-config.js`. Replace each `PASTE_HERE` with the matching value from step 7. Keep the quotation marks and commas.
 12. **Save to GitHub.** Click the **Source Control** icon on the left (it shows a "1"). Type a message like `Add Firebase settings` and click **Commit & Push**.
-13. **Test it.** Wait about a minute, then open your github.io link and force-refresh (Ctrl+F5 on Windows, Cmd+Shift+R on Mac). Type a message and click **Save**. When all five checks are green, Step 1 is done.
+13. **Wait about a minute**, then open your github.io link. With Step 3 in place, you should see the Barque+ login sidebar.
 
-## If a check is red
+## Part D: Accounts (Step 3)
 
-| Red check | Fix |
+14. **Turn on email and password logins.** In the Firebase console, open **Authentication** (under **Build** or **Security** in the left menu). Click **Get started** if it's your first time. On the **Sign-in method** tab, click **Email/Password**, turn on the **first** switch only (leave "Email link" off), and click **Save**.
+15. **Publish the new rules.** Open **Firestore Database → Rules**, replace everything with the contents of `firestore.rules`, and click **Publish**.
+16. **Allow your website.** In **Authentication → Settings → Authorized domains**, click **Add domain** and type `YOUR-USERNAME.github.io`.
+17. **Send email links to your own page.** In **Authentication → Templates**, open **Email address verification** and click the **pencil** icon. At the bottom, click **Customize action URL** and type
+    `https://YOUR-USERNAME.github.io/barque-plus/auth-action.html`
+    then click **Save**. This applies to the password reset email too. While you're there, you can set the **Sender name** to `Barque+`.
+
+## If something doesn't work
+
+| Problem | Fix |
 |---|---|
-| Firebase code downloaded | The network is blocking www.gstatic.com. Try another network. |
-| Firebase settings filled in | Some `PASTE_HERE` is left in `js/firebase-config.js`, or the change wasn't committed yet. |
-| Database can be read / can save: "permission denied" | The rules weren't published. Redo step 9. |
-| Database can be read: "No database found" | Redo step 8. |
-| Database can be read: "Could not reach the database" | The network is blocking firestore.googleapis.com. |
-| Page didn't change after editing | Wait a minute, then force-refresh. GitHub Pages takes about a minute to update. |
+| Sidebar says "Could not reach Firebase" | The network is blocking www.gstatic.com. Try another network. |
+| Sidebar says "Firebase settings are missing" | Some `PASTE_HERE` is left in `js/firebase-config.js`. |
+| "Firebase refused to save your profile" | The Step 3 rules weren't published. Redo step 15. |
+| Creating an account gives an error about the sign-in method | Email/Password isn't turned on. Redo step 14. |
+| The verification email never arrives | Check the junk folder. School email sometimes holds outside emails. |
+| Page didn't change after pushing | Wait a minute, then force-refresh. GitHub Pages takes about a minute to update. |
 
 ## Good to know
 
 - The values in `firebase-config.js` are meant to be public. The security rules decide what people can do.
-- Until Step 3 adds logins, anyone with the link can post short test messages. Step 3 removes the test page and locks everything behind school accounts.
-- Every later step works the same way: edit in github.dev, Commit & Push, then refresh the github.io link.
+- Only logged-in, verified @bsd405.org accounts can read or save anything in the database.
+- Day to day: edit in the VS Code app, preview with Live Preview, then Commit and Push in GitHub Desktop.

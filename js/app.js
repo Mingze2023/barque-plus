@@ -1,6 +1,9 @@
 // ============================================================
-// Barque+ front-end script
+// Barque+ front-end script: layout, sections, and startup.
+// Accounts live in js/account.js.
 // ============================================================
+import { loadFirebase } from './firebase.js';
+import { setupAccounts, saveAvatar } from './account.js';
 
 // ---------- Sections ----------
 // Every section of the site is one entry here.
@@ -86,20 +89,40 @@ const AVATARS = {
     </svg>`,
 };
 
+let avatarChoice = 'male';
+
+function drawAvatar() {
+  document.getElementById('avatarBtn').innerHTML = AVATARS[avatarChoice] || AVATARS.male;
+}
+
 function setupAvatar() {
-  const btn = document.getElementById('avatarBtn');
-  let current = load('avatar', 'male');
-
-  function draw() {
-    btn.innerHTML = AVATARS[current];
-  }
-  draw();
-
-  btn.addEventListener('click', () => {
-    current = current === 'male' ? 'female' : 'male';
-    save('avatar', current);
-    draw();
+  document.getElementById('avatarBtn').addEventListener('click', () => {
+    avatarChoice = avatarChoice === 'male' ? 'female' : 'male';
+    drawAvatar();             // change right away
+    saveAvatar(avatarChoice); // then save it to the account
   });
+}
+
+// ---------- Logged in / logged out ----------
+let loggedIn = false;
+
+function showLoggedIn(profile) {
+  loggedIn = true;
+  document.body.classList.remove('checking', 'logged-out');
+  document.body.classList.add('logged-in');
+  document.getElementById('profileName').textContent = profile.username;
+  document.getElementById('profileType').textContent = profile.profileType;
+  avatarChoice = profile.avatar === 'female' ? 'female' : 'male';
+  drawAvatar();
+  showSection();
+}
+
+function showLoggedOut() {
+  loggedIn = false;
+  document.body.classList.remove('checking', 'logged-in');
+  document.body.classList.add('logged-out');
+  document.getElementById('page').innerHTML = '';
+  document.title = 'Barque+';
 }
 
 // ---------- Date in the masthead ----------
@@ -110,10 +133,27 @@ function showDate() {
 }
 
 // ---------- Start ----------
-buildNav();
-showSection();
-showDate();
-setupAvatar();
-setupSidebar('leftSidebar', 'leftToggle', 'leftSidebar', 'Expand menu', 'Collapse menu');
-setupSidebar('rightSidebar', 'rightToggle', 'rightSidebar', 'Expand profile', 'Collapse profile');
-window.addEventListener('hashchange', showSection);
+async function start() {
+  buildNav();
+  showDate();
+  setupAvatar();
+  setupSidebar('leftSidebar', 'leftToggle', 'leftSidebar', 'Expand menu', 'Collapse menu');
+  setupSidebar('rightSidebar', 'rightToggle', 'rightSidebar', 'Expand profile', 'Collapse profile');
+  window.addEventListener('hashchange', () => { if (loggedIn) showSection(); });
+
+  let firebase;
+  try {
+    firebase = await loadFirebase();
+  } catch (e) {
+    showLoggedOut();
+    document.getElementById('authChooser').hidden = true;
+    document.getElementById('startupError').textContent = e.stage === 'config'
+      ? 'Firebase settings are missing in js/firebase-config.js.'
+      : 'Could not reach Firebase. The network may be blocking www.gstatic.com.';
+    return;
+  }
+
+  setupAccounts(firebase, { onLogin: showLoggedIn, onLogout: showLoggedOut });
+}
+
+start();

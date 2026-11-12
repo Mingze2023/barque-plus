@@ -1,0 +1,4 @@
+# Files that should never be uploaded to GitHub
+.vscode/
+.DS_Store
+Thumbs.db
