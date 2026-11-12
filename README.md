@@ -10,7 +10,10 @@ A website for Bellevue High School's student newspaper, the Barque.
 
 | File | What it does |
 |---|---|
-| `index.html` | The page people see (currently the Step 1 setup check) |
+| `index.html` | The main page: layout with both sidebars |
+| `css/style.css` | All colors, fonts and layout |
+| `js/app.js` | Sidebars, sections menu, profile icon |
+| `setup-check.html` | Step 1 test page for the Firebase connection (removed in Step 3) |
 | `js/firebase-config.js` | Firebase connection settings, the only place they're set |
 | `js/firebase.js` | Connects any page to Firebase |
 | `js/setup-check.js` | Step 1 test: saves and reads messages |

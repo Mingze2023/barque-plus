@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233a2414'/%3E%3Ctext x='8' y='46' font-family='Georgia,serif' font-weight='900' font-size='38' fill='%23fffdf8'%3EB%3C/text%3E%3Ctext x='36' y='40' font-family='Georgia,serif' font-weight='900' font-size='30' fill='%23f2b705'%3E+%3C/text%3E%3C/svg%3E">
+  <title>Barque+ · Setup Check</title>
+  <style>
+    :root {
+      --brown-900: #3a2414; --brown-600: #7a5230; --brown-300: #c9ad8c;
+      --yellow-500: #f2b705; --yellow-100: #fff3c4; --white: #fffdf8; --paper: #faf5e9;
+      --teal: #1f9e8f; --red: #d32f2f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--paper); color: var(--brown-900);
+      font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      display: flex; justify-content: center; padding: 48px 16px;
+    }
+    main { width: 100%; max-width: 640px; }
+    h1 {
+      margin: 0; text-align: center; font-family: Georgia, "Times New Roman", serif;
+      font-size: 3.2rem; font-weight: 900;
+    }
+    h1 span { color: var(--yellow-500); }
+    .sub {
+      text-align: center; color: var(--brown-600); margin: 4px 0 28px;
+      padding-bottom: 18px; border-bottom: 3px double var(--brown-900);
+    }
+    .card {
+      background: var(--white); border-radius: 14px; padding: 20px 24px; margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(58, 36, 20, 0.08); border-top: 5px solid var(--yellow-500);
+    }
+    .card h2 { margin: 0 0 12px; font-family: Georgia, serif; font-size: 1.25rem; }
+    .checks { list-style: none; margin: 0; padding: 0; }
+    .checks li { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--yellow-100); }
+    .checks li:last-child { border-bottom: none; }
+    .icon {
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+      font-weight: 700; color: #fff; background: var(--brown-300);
+    }
+    .ok .icon { background: var(--teal); }
+    .bad .icon { background: var(--red); }
+    .detail { font-size: 0.88rem; color: var(--brown-600); margin-top: 2px; }
+    .bad .detail { color: var(--red); }
+    form { display: flex; gap: 8px; }
+    input {
+      flex: 1; height: 42px; padding: 0 12px; font-size: 1rem; border-radius: 10px;
+      border: 2px solid var(--brown-300); background: var(--white); color: var(--brown-900);
+    }
+    input:focus { outline: none; border-color: var(--yellow-500); }
+    button {
+      height: 42px; padding: 0 18px; border: none; border-radius: 10px; cursor: pointer;
+      background: var(--yellow-500); color: var(--brown-900); font-weight: 700; font-size: 1rem;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    #messages { list-style: none; margin: 16px 0 0; padding: 0; }
+    #messages li { padding: 8px 0; border-bottom: 1px solid var(--yellow-100); }
+    #messages time { display: block; font-size: 0.8rem; color: var(--brown-600); }
+    .hint { font-size: 0.88rem; color: var(--brown-600); margin: 10px 0 0; }
+    .error { color: var(--red); font-weight: 600; font-size: 0.9rem; min-height: 1em; margin: 8px 0 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Barque<span>+</span></h1>
+    <p class="sub">Step 1 setup check</p>
+
+    <section class="card">
+      <h2>Checklist</h2>
+      <ul class="checks">
+        <li id="check-site" class="ok">
+          <span class="icon">✓</span>
+          <div>Website is online<div class="detail">GitHub Pages is serving this page.</div></div>
+        </li>
+        <li id="check-library">
+          <span class="icon">…</span>
+          <div>Firebase code downloaded<div class="detail">Checking…</div></div>
+        </li>
+        <li id="check-config">
+          <span class="icon">…</span>
+          <div>Firebase settings filled in<div class="detail">Waiting…</div></div>
+        </li>
+        <li id="check-database">
+          <span class="icon">…</span>
+          <div>Database can be read<div class="detail">Waiting…</div></div>
+        </li>
+        <li id="check-save">
+          <span class="icon">…</span>
+          <div>Database can save<div class="detail">Type a message below and click Save.</div></div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Test messages</h2>
+      <form id="testForm">
+        <input id="testInput" maxlength="100" placeholder="Type anything (max 100 characters)" disabled>
+        <button id="saveBtn" type="submit" disabled>Save</button>
+      </form>
+      <p class="error" id="saveError"></p>
+      <ul id="messages"></ul>
+      <p class="hint">Open this page on two different computers: a message saved on one appears on the other within a second.</p>
+    </section>
+  </main>
+
+  <script type="module" src="js/setup-check.js"></script>
+</body>
+</html>
