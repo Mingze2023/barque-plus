@@ -1,0 +1,73 @@
+{
+ "source": "sample",
+ "updated": "2026-11-13T16:20:01.040728+00:00",
+ "articles": [
+  {
+   "id": "sample-1",
+   "sample": true,
+   "url": "https://www.thebarquebhs.com/blog",
+   "title": "Sample Article: Welcome to Barque+",
+   "author": "The Barque",
+   "date": "2026-11-12T16:20:01.040728+00:00",
+   "firstSeen": "2026-11-12T16:20:01.040728+00:00",
+   "image": null,
+   "excerpt": "This is a sample article so you can try the News page before the scraper has run. Once you run the \"Scrape news and publish site\" workflow on GitHub, real articles from the Barque replace these samples. Try voting, searching, sorting and leaving a comment.",
+   "body": [
+    {
+     "type": "paragraph",
+     "text": "This is a sample article so you can try the News page before the scraper has run."
+    },
+    {
+     "type": "paragraph",
+     "text": "Once you run the \"Scrape news and publish site\" workflow on GitHub, real articles from the Barque replace these samples."
+    },
+    {
+     "type": "paragraph",
+     "text": "Try voting, searching, sorting and leaving a comment."
+    }
+   ]
+  },
+  {
+   "id": "sample-2",
+   "sample": true,
+   "url": "https://www.thebarquebhs.com/blog",
+   "title": "Sample Article: How Voting Works",
+   "author": "The Barque",
+   "date": "2026-11-08T16:20:01.040728+00:00",
+   "firstSeen": "2026-11-08T16:20:01.040728+00:00",
+   "image": null,
+   "excerpt": "Each account gets one vote per article. Click the same arrow again to take your vote back, or the other arrow to switch it. Sorting by upvotes uses the score: upvotes minus downvotes.",
+   "body": [
+    {
+     "type": "paragraph",
+     "text": "Each account gets one vote per article. Click the same arrow again to take your vote back, or the other arrow to switch it."
+    },
+    {
+     "type": "paragraph",
+     "text": "Sorting by upvotes uses the score: upvotes minus downvotes."
+    }
+   ]
+  },
+  {
+   "id": "sample-3",
+   "sample": true,
+   "url": "https://www.thebarquebhs.com/blog",
+   "title": "Sample Article: Comments",
+   "author": "The Barque",
+   "date": "2026-11-01T16:20:01.040728+00:00",
+   "firstSeen": "2026-11-01T16:20:01.040728+00:00",
+   "image": null,
+   "excerpt": "Comments can be up to 500 characters long and show your username and the date. In a later step, editors will be able to remove comments, and a filter will block inappropriate words.",
+   "body": [
+    {
+     "type": "paragraph",
+     "text": "Comments can be up to 500 characters long and show your username and the date."
+    },
+    {
+     "type": "paragraph",
+     "text": "In a later step, editors will be able to remove comments, and a filter will block inappropriate words."
+    }
+   ]
+  }
+ ]
+}

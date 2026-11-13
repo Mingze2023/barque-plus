@@ -7,6 +7,15 @@
 // at  users/{their id}.
 // ============================================================
 
+// ===== TESTING SWITCH =====
+// true  = new accounts must click the link in their email before getting in
+// false = skip email verification (for building/testing while school email
+//         blocks the verification emails)
+// If you change this, also change verificationRequired() in firestore.rules
+// to match, and publish the rules again.
+const REQUIRE_EMAIL_VERIFICATION = false;
+// ==========================
+
 const SCHOOL_DOMAIN = '@bsd405.org';
 const MIN_PASSWORD_LENGTH = 6;   // Firebase doesn't allow shorter passwords
 const RESEND_WAIT_SECONDS = 60;  // wait between "Resend link" clicks
@@ -118,9 +127,11 @@ async function submitForm(event) {
   try {
     if (mode === 'register') {
       const result = await authApi.createUserWithEmailAndPassword(auth, email, password);
-      await authApi.sendEmailVerification(result.user);
-      lastResend = Date.now();
-      // The "Check your email" panel appears automatically (see watchLogin)
+      if (REQUIRE_EMAIL_VERIFICATION) {
+        await authApi.sendEmailVerification(result.user);
+        lastResend = Date.now();
+        // The "Check your email" panel appears automatically (see watchLogin)
+      }
     } else if (mode === 'login') {
       await authApi.signInWithEmailAndPassword(auth, email, password);
     } else {
@@ -191,6 +202,7 @@ async function enterSite(user) {
     let profile;
     if (snap.exists()) {
       profile = snap.data();
+      delete profile.lastSeen; // only needed below; not saved back
     } else {
       // First time this account gets in: create its profile
       profile = {
@@ -202,11 +214,32 @@ async function enterSite(user) {
       };
       await firestore.setDoc(profileRef, profile);
     }
-    callbacks.onLogin(profile);
+
+    // When was this account last on the site? (powers the "New" label on articles)
+    const lastSeen = snap.exists() && snap.data().lastSeen ? snap.data().lastSeen.toDate() : null;
+    rememberVisit();
+
+    callbacks.onLogin({ ...profile, uid: user.uid, newSince: lastSeen });
   } catch (e) {
     showPanel('chooser');
     $('startupError').textContent = messageFor(e);
     callbacks.onLogout();
+  }
+}
+
+// Saves "this account was on the site now". Called when entering the site
+// and when the page is closed or hidden.
+let visitTrackingStarted = false;
+function rememberVisit() {
+  if (profileRef) {
+    fb.firestore.updateDoc(profileRef, { lastSeen: fb.firestore.serverTimestamp() })
+      .catch((e) => console.error('Could not save last visit:', e));
+  }
+  if (!visitTrackingStarted) {
+    visitTrackingStarted = true;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') rememberVisit();
+    });
   }
 }
 
@@ -242,7 +275,7 @@ function watchLogin() {
       return;
     }
 
-    if (!user.emailVerified) {
+    if (REQUIRE_EMAIL_VERIFICATION && !user.emailVerified) {
       callbacks.onLogout();
       showVerify(user);
       return;

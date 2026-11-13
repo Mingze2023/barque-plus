@@ -4,21 +4,16 @@
 // ============================================================
 import { loadFirebase } from './firebase.js';
 import { setupAccounts, saveAvatar } from './account.js';
+import { newsSection } from './news.js';
 
 // ---------- Sections ----------
 // Every section of the site is one entry here.
 // To add a new section later, add one object to this list.
+// Every section of the site is one entry here. Each section lives in its own
+// file in js/ and has: id, label, icon, mount(el, param, ctx), and optionally reset().
+// To add a new section later, import it above and add it to this list.
 const SECTIONS = [
-  {
-    id: 'news',
-    label: 'News',
-    // Newspaper icon
-    icon: '<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M7 9h7M7 12h7M7 15h4"/>',
-    render: () => `
-      <h2 class="page-title">News</h2>
-      <div class="placeholder">Articles will appear here (Step 4).</div>
-    `,
-  },
+  newsSection,
 ];
 
 const DEFAULT_SECTION = 'news';
@@ -42,12 +37,21 @@ function buildNav() {
   `).join('');
 }
 
-// ---------- Show the section named in the address bar (#news etc.) ----------
+// ---------- Show the section named in the address bar ----------
+// The address looks like #news, or #news/<article-id> for one article.
+let ctx = null;            // { fb, profile } while logged in
+let leaveSection = null;   // cleanup for the section currently shown
+
 function showSection() {
-  const id = location.hash.slice(1) || DEFAULT_SECTION;
+  const [id, ...rest] = (location.hash.slice(1) || DEFAULT_SECTION).split('/');
+  const param = rest.length ? decodeURIComponent(rest.join('/')) : null;
   const section = SECTIONS.find(s => s.id === id) || SECTIONS[0];
 
-  document.getElementById('page').innerHTML = section.render();
+  if (leaveSection) { leaveSection(); leaveSection = null; }
+  const page = document.getElementById('page');
+  page.innerHTML = '';
+  leaveSection = section.mount(page, param, ctx) || null;
+
   document.querySelectorAll('.nav-link').forEach(link => {
     link.classList.toggle('active', link.dataset.id === section.id);
   });
@@ -106,8 +110,11 @@ function setupAvatar() {
 // ---------- Logged in / logged out ----------
 let loggedIn = false;
 
+let firebase = null;
+
 function showLoggedIn(profile) {
   loggedIn = true;
+  ctx = { fb: firebase, profile };
   document.body.classList.remove('checking', 'logged-out');
   document.body.classList.add('logged-in');
   document.getElementById('profileName').textContent = profile.username;
@@ -119,6 +126,9 @@ function showLoggedIn(profile) {
 
 function showLoggedOut() {
   loggedIn = false;
+  if (leaveSection) { leaveSection(); leaveSection = null; }
+  SECTIONS.forEach(s => s.reset && s.reset());
+  ctx = null;
   document.body.classList.remove('checking', 'logged-in');
   document.body.classList.add('logged-out');
   document.getElementById('page').innerHTML = '';
@@ -141,7 +151,6 @@ async function start() {
   setupSidebar('rightSidebar', 'rightToggle', 'rightSidebar', 'Expand profile', 'Collapse profile');
   window.addEventListener('hashchange', () => { if (loggedIn) showSection(); });
 
-  let firebase;
   try {
     firebase = await loadFirebase();
   } catch (e) {

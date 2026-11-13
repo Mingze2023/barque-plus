@@ -13,16 +13,62 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ===== TESTING SWITCH =====
+    // true  = accounts must verify their email before using the site
+    // false = skip email verification (while school email blocks the emails)
+    // Keep this the same as REQUIRE_EMAIL_VERIFICATION in js/account.js.
+    function verificationRequired() {
+      return false;
+    }
+    // ==========================
+
     // ---------- Who counts as a Barque+ user ----------
-    // Logged in, with a verified @bsd405.org email.
+    // Logged in with an @bsd405.org email (verified, if the switch is on).
     function isSchoolUser() {
       return request.auth != null
-        && request.auth.token.email_verified == true
-        && request.auth.token.email.lower().matches('.*@bsd405[.]org$');
+        && request.auth.token.email.lower().matches('.*@bsd405[.]org$')
+        && (request.auth.token.email_verified == true || !verificationRequired());
     }
 
     function isOwner(userId) {
       return request.auth.uid == userId;
+    }
+
+    function myUsername() {
+      return request.auth.token.email.lower().split('@')[0];
+    }
+
+    // ---------- Helpers for votes ----------
+    function myVotePath(articleId) {
+      return /databases/$(database)/documents/users/$(request.auth.uid)/votes/$(articleId);
+    }
+    function statsPath(articleId) {
+      return /databases/$(database)/documents/articles/$(articleId);
+    }
+    // My vote on an article before / after this change: 1, -1, or 0 (no vote)
+    function voteBefore(articleId) {
+      return exists(myVotePath(articleId)) ? get(myVotePath(articleId)).data.value : 0;
+    }
+    function voteAfter(articleId) {
+      return existsAfter(myVotePath(articleId)) ? getAfter(myVotePath(articleId)).data.value : 0;
+    }
+    // How much "up" and "down" must change when a vote goes from b to a
+    function upChange(b, a) {
+      return (a == 1 ? 1 : 0) - (b == 1 ? 1 : 0);
+    }
+    function downChange(b, a) {
+      return (a == -1 ? 1 : 0) - (b == -1 ? 1 : 0);
+    }
+    // The article's counts after this change match the vote change exactly
+    function countsMatchVote(articleId) {
+      let b = voteBefore(articleId);
+      let a = voteAfter(articleId);
+      let oldUp = exists(statsPath(articleId)) ? get(statsPath(articleId)).data.get('up', 0) : 0;
+      let oldDown = exists(statsPath(articleId)) ? get(statsPath(articleId)).data.get('down', 0) : 0;
+      return a != b
+        && existsAfter(statsPath(articleId))
+        && getAfter(statsPath(articleId)).data.get('up', 0) - oldUp == upChange(b, a)
+        && getAfter(statsPath(articleId)).data.get('down', 0) - oldDown == downChange(b, a);
     }
 
     // ---------- User profiles: users/{userId} ----------
@@ -37,18 +83,82 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['username', 'email', 'profileType', 'avatar', 'createdAt'])
         && request.resource.data.profileType == 'Student'
         && request.resource.data.email == request.auth.token.email.lower()
-        && request.resource.data.username == request.auth.token.email.lower().split('@')[0]
+        && request.resource.data.username == myUsername()
         && request.resource.data.avatar in ['male', 'female']
         && request.resource.data.createdAt == request.time;
 
-      // After that, the only thing you can change is your profile icon.
+      // After that, you can only change your profile icon and your last-visit time.
       // Changing Profile Types will be added for editors in Step 14.
       allow update: if isSchoolUser()
         && isOwner(userId)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avatar'])
-        && request.resource.data.avatar in ['male', 'female'];
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avatar', 'lastSeen'])
+        && request.resource.data.avatar in ['male', 'female']
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['lastSeen'])
+            || request.resource.data.lastSeen == request.time);
 
       allow delete: if false;
+
+      // ----- Your votes: users/{userId}/votes/{articleId} = { value: 1 or -1 } -----
+      // Only you can see or change your votes, and the article's counts must change to match.
+      match /votes/{articleId} {
+        allow read: if isSchoolUser() && isOwner(userId);
+        allow create, update: if isSchoolUser()
+          && isOwner(userId)
+          && request.resource.data.keys().hasOnly(['value'])
+          && request.resource.data.value in [1, -1]
+          && countsMatchVote(articleId);
+        allow delete: if isSchoolUser()
+          && isOwner(userId)
+          && countsMatchVote(articleId);
+      }
+    }
+
+    // ---------- News articles: articles/{articleId} = { up, down, views } ----------
+    match /articles/{articleId} {
+      function oldValue(field) {
+        return resource == null ? 0 : resource.data.get(field, 0);
+      }
+      function newValue(field) {
+        return request.resource.data.get(field, 0);
+      }
+      function isOneMoreView() {
+        return newValue('views') == oldValue('views') + 1
+          && newValue('up') == oldValue('up')
+          && newValue('down') == oldValue('down');
+      }
+      function isVoteChange() {
+        let b = voteBefore(articleId);
+        let a = voteAfter(articleId);
+        return a != b
+          && newValue('views') == oldValue('views')
+          && newValue('up') - oldValue('up') == upChange(b, a)
+          && newValue('down') - oldValue('down') == downChange(b, a);
+      }
+
+      allow read: if isSchoolUser();
+
+      // A change is allowed if it's exactly one more view, or a vote change
+      // that matches the user's own vote.
+      allow create, update: if isSchoolUser()
+        && request.resource.data.keys().hasOnly(['up', 'down', 'views'])
+        && (isOneMoreView() || isVoteChange());
+
+      allow delete: if false;
+
+      // ----- Comments: articles/{articleId}/comments/{commentId} -----
+      match /comments/{commentId} {
+        allow read: if isSchoolUser();
+        allow create: if isSchoolUser()
+          && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.username == myUsername()
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500
+          && request.resource.data.createdAt == request.time;
+        // Editing and deleting comments come later (editors, Step 14).
+        allow update, delete: if false;
+      }
     }
 
     // Everything else is locked until later steps open it up.

@@ -54,6 +54,16 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
     `https://YOUR-USERNAME.github.io/barque-plus/auth-action.html`
     then click **Save**. This applies to the password reset email too. While you're there, you can set the **Sender name** to `Barque+`.
 
+## Part E: News (Step 4)
+
+18. **Let GitHub Actions publish the site.** On GitHub, open **Settings → Pages**. Under **Build and deployment → Source**, choose **GitHub Actions**. (Do this before pushing the Step 4 files.)
+19. **Publish the new rules.** Firestore Database → Rules → paste `firestore.rules` → **Publish**.
+20. **Push the Step 4 files** with GitHub Desktop. The **Actions** tab on GitHub shows a run called "Scrape news and publish site". When it has a green check, the site is updated.
+21. **Get the real news.** Actions tab → **Scrape news and publish site** (left list) → **Run workflow** → **Run workflow**. After a few minutes, the sample articles are replaced with the Barque's articles. From then on it runs by itself every morning.
+22. **Pull the new news** in GitHub Desktop (**Fetch origin**, then **Pull origin**) before your next commit, since GitHub saved a new `data/news.json`.
+
+**Testing switch:** email verification is currently turned **off** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). Turn both back to `true` and publish the rules once school email can receive the verification emails.
+
 ## If something doesn't work
 
 | Problem | Fix |
@@ -63,7 +73,10 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 | "Firebase refused to save your profile" | The Step 3 rules weren't published. Redo step 15. |
 | Creating an account gives an error about the sign-in method | Email/Password isn't turned on. Redo step 14. |
 | The verification email never arrives | Check the junk folder. School email sometimes holds outside emails. |
-| Page didn't change after pushing | Wait a minute, then force-refresh. GitHub Pages takes about a minute to update. |
+| Page didn't change after pushing | Check the Actions tab: wait for the green check, then force-refresh. |
+| Actions run has a red X at "Scrape the Barque's news" | Click it to see the log. The scraper prints what it found and what failed. |
+| Actions run has a red X at "Publish to GitHub Pages" | Settings → Pages → Source must be **GitHub Actions** (step 18). |
+| Votes or comments say "permission-denied" | The Step 4 rules weren't published. Redo step 19. |
 
 ## Good to know
 

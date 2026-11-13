@@ -1,0 +1,84 @@
+# ============================================================
+# Publishes the Barque+ website, and scrapes the Barque's news.
+#
+# Runs:
+#   - every time you push changes  -> publishes the site
+#   - every day at about 6 a.m.     -> scrapes news, then publishes
+#   - when you click "Run workflow" -> scrapes news, then publishes
+#     (GitHub website: Actions tab > Scrape news and publish site)
+#
+# For this to work, GitHub Pages must be set to use GitHub Actions:
+#   Settings > Pages > Build and deployment > Source: GitHub Actions
+# ============================================================
+name: Scrape news and publish site
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 14 * * *"   # 14:17 UTC = about 6 a.m. in Bellevue
+  workflow_dispatch:
+    inputs:
+      refresh_all:
+        description: "Re-download every article (not just new ones)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # to save the updated news.json
+  pages: write      # to publish the site
+  id-token: write   # required by GitHub Pages
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        if: github.event_name != 'push'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Scrape the Barque's news
+        if: github.event_name != 'push'
+        env:
+          REFRESH_ALL: ${{ inputs.refresh_all && '1' || '0' }}
+        run: |
+          pip install beautifulsoup4
+          python scripts/scrape_news.py
+
+      - name: Save the news to the repository
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "Barque+ news bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/news.json
+          if git diff --staged --quiet; then
+            echo "No news changes."
+          else
+            git commit -m "Update news ($(date -u +%Y-%m-%d))"
+            git push
+          fi
+
+      - name: Package the website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
