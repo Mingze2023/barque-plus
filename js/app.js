@@ -5,6 +5,8 @@
 import { loadFirebase } from './firebase.js';
 import { setupAccounts, saveAvatar } from './account.js';
 import { newsSection } from './news.js';
+import { eventsSection } from './events.js';
+import { closeModal } from './modal.js';
 
 // ---------- Sections ----------
 // Every section of the site is one entry here.
@@ -14,6 +16,7 @@ import { newsSection } from './news.js';
 // To add a new section later, import it above and add it to this list.
 const SECTIONS = [
   newsSection,
+  eventsSection,
 ];
 
 const DEFAULT_SECTION = 'news';
@@ -128,6 +131,7 @@ function showLoggedOut() {
   loggedIn = false;
   if (leaveSection) { leaveSection(); leaveSection = null; }
   SECTIONS.forEach(s => s.reset && s.reset());
+  closeModal();
   ctx = null;
   document.body.classList.remove('checking', 'logged-in');
   document.body.classList.add('logged-out');

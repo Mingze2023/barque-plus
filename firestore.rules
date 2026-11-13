@@ -161,6 +161,14 @@ service cloud.firestore {
       }
     }
 
+    // ---------- Events: events/{eventId} = { title, body, createdAt } ----------
+    // Everyone can read events. Adding them will be for editors (Step 14);
+    // until then, add test events by hand in the Firebase console.
+    match /events/{eventId} {
+      allow read: if isSchoolUser();
+      allow write: if false;
+    }
+
     // Everything else is locked until later steps open it up.
     match /{document=**} {
       allow read, write: if false;

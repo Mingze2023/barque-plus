@@ -62,6 +62,15 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 21. **Get the real news.** Actions tab → **Scrape news and publish site** (left list) → **Run workflow** → **Run workflow**. After a few minutes, the sample articles are replaced with the Barque's articles. From then on it runs by itself every morning.
 22. **Pull the new news** in GitHub Desktop (**Fetch origin**, then **Pull origin**) before your next commit, since GitHub saved a new `data/news.json`.
 
+## Part F: Events (Step 5)
+
+23. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
+24. **Optional: add a test event by hand.** Firestore Database → **Data** → **+ Start collection** (or open `events` if it exists). Collection ID: `events`. Use **Auto-ID**, then add three fields:
+    - `title` (string): the event's name
+    - `body` (string): the description. To start a new paragraph, leave a blank line.
+    - `createdAt` (timestamp): when it was added
+    As soon as one real event exists, the placeholders disappear.
+
 **Testing switch:** email verification is currently turned **off** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). Turn both back to `true` and publish the rules once school email can receive the verification emails.
 
 ## If something doesn't work

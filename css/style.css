@@ -711,3 +711,84 @@ body.action-page {
 .comment-empty { color: var(--brown-600); font-style: italic; }
 /* An image that failed to load: hide the picture, keep any caption */
 .article figure.image-failed img, img.image-failed { display: none; }
+
+/* ============================================================
+   Events (Step 5)
+   ============================================================ */
+.events-note { margin: 8px 0 0; }
+.events-intro { color: var(--brown-600); margin: 12px 0 18px; }
+.events-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+
+.event-item {
+  opacity: var(--fade, 1);   /* older events fade (set per event in js/events.js) */
+  transition: opacity 0.25s;
+}
+.event-item:hover, .event-item:focus-within { opacity: 1; }
+
+.event-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  border: none;
+  border-left: 5px solid var(--yellow-500);
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: 0 2px 10px rgba(58, 36, 20, 0.08);
+  text-align: left;
+  font-family: var(--font-body);
+  color: var(--brown-900);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+}
+.event-link:hover { transform: translateX(4px); box-shadow: 0 6px 18px rgba(58, 36, 20, 0.14); border-left-color: var(--accent-teal); }
+.event-link:focus-visible { outline: 3px solid rgba(31, 158, 143, 0.5); outline-offset: 2px; }
+
+.event-date {
+  width: 56px; height: 60px; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-radius: 10px; background: var(--brown-800); color: var(--white);
+}
+.event-month { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow-400); }
+.event-day { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; line-height: 1; }
+
+.event-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.event-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
+.event-preview { color: var(--brown-600); font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.event-arrow { width: 22px; height: 22px; flex-shrink: 0; fill: none; stroke: var(--brown-300); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s, transform 0.2s; }
+.event-link:hover .event-arrow { stroke: var(--accent-teal); transform: translateX(3px); }
+
+/* ============================================================
+   Popup window (js/modal.js), shared by all sections
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: rgba(58, 36, 20, 0.45);
+  opacity: 0; transition: opacity 0.2s;
+}
+.modal-overlay[hidden] { display: none; }
+.modal-overlay.open { opacity: 1; }
+.modal {
+  position: relative;
+  width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto;
+  padding: 28px 30px 26px;
+  background: var(--white);
+  border-radius: 16px;
+  border-top: 6px solid var(--yellow-500);
+  box-shadow: 0 20px 50px rgba(58, 36, 20, 0.3);
+  transform: translateY(12px) scale(0.98); transition: transform 0.2s var(--ease);
+}
+.modal-overlay.open .modal { transform: none; }
+.modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 36px; height: 36px; border: none; border-radius: 50%;
+  background: transparent; cursor: pointer; display: grid; place-items: center;
+}
+.modal-close:hover { background: var(--yellow-100); }
+.modal-close svg { width: 20px; height: 20px; stroke: var(--brown-600); stroke-width: 2.5; stroke-linecap: round; }
+.modal-title { margin: 0 40px 4px 0; font-family: var(--font-display); font-size: 1.6rem; line-height: 1.2; }
+.modal-subtitle { color: var(--brown-600); font-size: 0.9rem; font-weight: 600; margin-bottom: 14px; }
+.modal-body p { margin: 0 0 12px; line-height: 1.6; }
+.modal-body p:last-child { margin-bottom: 0; }

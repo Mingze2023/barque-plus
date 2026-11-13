@@ -14,6 +14,9 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `css/style.css` | All colors, fonts and layout |
 | `js/app.js` | Sidebars, sections menu, profile icon, startup |
 | `js/news.js` | News section: list, search, sort, votes, views, articles, comments |
+| `js/events.js` | Events section: list of events, popups, placeholders |
+| `js/modal.js` | The popup window any section can use |
+| `js/util.js` | Small shared helpers (safe text, dates, paragraphs) |
 | `js/account.js` | Log In, Create Account, Forgot Password, email verification, profiles |
 | `auth-action.html` + `js/auth-action.js` | The page that opens from links in Barque+ emails |
 | `js/firebase-config.js` | Firebase connection settings, the only place they're set |

@@ -9,6 +9,8 @@
 //   users/{userId}/votes/{articleId}      { value: 1 or -1 }
 // ============================================================
 
+import { esc, formatDate } from './util.js';
+
 const COMMENT_LIMIT = 500;
 
 // ---------- Shared state while logged in ----------
@@ -24,17 +26,6 @@ const ICON_DOWN = '<svg viewBox="0 0 24 24"><path d="M12 19l-7-9h14z"/></svg>';
 const ICON_EYE = '<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 
 // ---------- Helpers ----------
-// Makes text safe to put inside HTML (articles come from another website)
-function esc(text) {
-  return String(text ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
-function formatDate(value) {
-  const date = value instanceof Date ? value : new Date(value);
-  if (isNaN(date)) return '';
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
 function statsFor(id) {
   const s = stats[id] || {};
   return { up: s.up || 0, down: s.down || 0, views: s.views || 0 };
