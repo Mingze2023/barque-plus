@@ -4,6 +4,7 @@
 // outside the box.
 //
 //   openModal({ title: 'Club Fair', subtitle: 'Added Nov 13', html: '<p>...</p>' })
+// Returns the popup's body element, so forms inside it can be hooked up.
 // ============================================================
 import { esc } from './util.js';
 
@@ -40,6 +41,7 @@ export function openModal({ title, subtitle = '', html = '' }) {
   overlay.hidden = false;
   requestAnimationFrame(() => overlay.classList.add('open'));
   overlay.querySelector('.modal-close').focus();
+  return overlay.querySelector('#modalBody');
 }
 
 export function closeModal() {

@@ -22,12 +22,27 @@ service cloud.firestore {
     }
     // ==========================
 
+    // ============================================================
+    // ===== EDITOR LIST: the emails of every Editor account =====
+    // Add or remove emails here, then click Publish.
+    // Type them in lowercase, in quotes, separated by commas, e.g.
+    //   return ['mingze@bsd405.org', 'someone@bsd405.org'];
+    function editorEmails() {
+      return [];
+    }
+    // ============================================================
+
     // ---------- Who counts as a Barque+ user ----------
     // Logged in with an @bsd405.org email (verified, if the switch is on).
     function isSchoolUser() {
       return request.auth != null
         && request.auth.token.email.lower().matches('.*@bsd405[.]org$')
         && (request.auth.token.email_verified == true || !verificationRequired());
+    }
+
+    // An Editor: a Barque+ user whose email is in the editor list above
+    function isEditor() {
+      return isSchoolUser() && request.auth.token.email.lower() in editorEmails();
     }
 
     function isOwner(userId) {
@@ -96,6 +111,12 @@ service cloud.firestore {
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['lastSeen'])
             || request.resource.data.lastSeen == request.time);
 
+      // Editors can change other accounts' Profile Type (Set Profile Types page).
+      // "Editor" itself is only given through the editor list above.
+      allow update: if isEditor()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['profileType'])
+        && request.resource.data.profileType in ['Student', 'Teacher'];
+
       allow delete: if false;
 
       // ----- Your votes: users/{userId}/votes/{articleId} = { value: 1 or -1 } -----
@@ -156,17 +177,39 @@ service cloud.firestore {
           && request.resource.data.text.size() > 0
           && request.resource.data.text.size() <= 500
           && request.resource.data.createdAt == request.time;
-        // Editing and deleting comments come later (editors, Step 14).
-        allow update, delete: if false;
+        // Editors can delete comments, and put one back with Undo.
+        allow delete: if isEditor();
+        allow create: if isEditor()
+          && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt'])
+          && request.resource.data.text is string
+          && request.resource.data.text.size() <= 500
+          && request.resource.data.createdAt is timestamp;
+        allow update: if false;
       }
     }
 
     // ---------- Events: events/{eventId} = { title, body, createdAt } ----------
-    // Everyone can read events. Adding them will be for editors (Step 14);
-    // until then, add test events by hand in the Firebase console.
+    // Everyone can read events. Editors add and delete them (and Undo puts
+    // a deleted event back exactly as it was).
     match /events/{eventId} {
       allow read: if isSchoolUser();
-      allow write: if false;
+      allow create: if isEditor()
+        && request.resource.data.keys().hasOnly(['title', 'body', 'createdAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200
+        && request.resource.data.body is string
+        && request.resource.data.body.size() <= 20000
+        && request.resource.data.createdAt is timestamp;
+      allow delete: if isEditor();
+      allow update: if false;
+    }
+
+    // ---------- Editor check ----------
+    // The website asks for editorCheck/{your id}. Only editors are allowed to,
+    // which is how the page learns you're an editor without a second list.
+    match /editorCheck/{userId} {
+      allow get: if isEditor() && isOwner(userId);
     }
 
     // Everything else is locked until later steps open it up.

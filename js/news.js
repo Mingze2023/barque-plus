@@ -10,6 +10,7 @@
 // ============================================================
 
 import { esc, formatDate } from './util.js';
+import { showToast } from './toast.js';
 
 const COMMENT_LIMIT = 500;
 
@@ -23,6 +24,7 @@ let listState = { search: '', sort: 'date' };
 const ICON_NEWS = '<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M7 9h7M7 12h7M7 15h4"/>';
 const ICON_UP = '<svg viewBox="0 0 24 24"><path d="M12 5l7 9H5z"/></svg>';
 const ICON_DOWN = '<svg viewBox="0 0 24 24"><path d="M12 19l-7-9h14z"/></svg>';
+const ICON_TRASH = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>';
 const ICON_EYE = '<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 
 // ---------- Helpers ----------
@@ -321,8 +323,30 @@ function mountArticle(el, article, ctx) {
           return `<li class="comment">
             <div class="comment-head"><strong>${esc(c.username)}</strong> · ${esc(formatDate(when))}</div>
             <p class="comment-text">${esc(c.text)}</p>
+            ${ctx.editorMode ? `<button class="trash-btn" data-delete="${esc(doc.id)}" title="Delete this comment" aria-label="Delete this comment">${ICON_TRASH}</button>` : ''}
           </li>`;
         }).join('');
+
+    // Editor Mode: delete a comment, with Undo
+    list.querySelectorAll('[data-delete]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const original = snapshot.docs.find((d) => d.id === button.dataset.delete);
+        const ref = firestore.doc(commentsRef, original.id);
+        const saved = original.data();
+        try {
+          await firestore.deleteDoc(ref);
+        } catch (e) {
+          showToast(`Couldn't delete it (${e.code || e.message}).`);
+          return;
+        }
+        showToast(`Deleted ${saved.username}'s comment.`, {
+          action: 'Undo',
+          seconds: 8,
+          onAction: () => firestore.setDoc(ref, saved)
+            .catch((e) => showToast(`Couldn't undo (${e.code || e.message}).`)),
+        });
+      });
+    });
   }, (error) => {
     el.querySelector('#commentList').innerHTML = `<li class="comment-empty">Comments couldn't load (${esc(error.code || error.message)}).</li>`;
   });

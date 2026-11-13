@@ -71,6 +71,13 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
     - `createdAt` (timestamp): when it was added
     As soon as one real event exists, the placeholders disappear.
 
+## Part G: Editors (Step 6)
+
+25. **Add the editors.** Open `firestore.rules` and find the **EDITOR LIST** section near the top. Put the emails inside the brackets, in lowercase and in quotes, separated by commas:
+    `return ['mingze@bsd405.org', 'someone@bsd405.org'];`
+26. **Publish the rules** (Firestore Database → Rules → paste the whole file → **Publish**). Whenever you add or remove an editor, edit this section and publish again. The file in your project is your record of it; the Firebase console is what counts.
+27. **Log out and back in** with an editor account. The Profile Type shows **Editor**, an **Editor Mode** switch appears in the right sidebar, and **Set Profile Types** appears in the menu.
+
 **Testing switch:** email verification is currently turned **off** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). Turn both back to `true` and publish the rules once school email can receive the verification emails.
 
 ## If something doesn't work

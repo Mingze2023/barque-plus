@@ -219,7 +219,17 @@ async function enterSite(user) {
     const lastSeen = snap.exists() && snap.data().lastSeen ? snap.data().lastSeen.toDate() : null;
     rememberVisit();
 
-    callbacks.onLogin({ ...profile, uid: user.uid, newSince: lastSeen });
+    // Is this an Editor? Only editors may read editorCheck/{their id} (see the
+    // editor list in firestore.rules), so if this succeeds, they're an editor.
+    let isEditor = false;
+    try {
+      await firestore.getDoc(firestore.doc(db, 'editorCheck', user.uid));
+      isEditor = true;
+    } catch (e) {
+      isEditor = false;
+    }
+
+    callbacks.onLogin({ ...profile, uid: user.uid, newSince: lastSeen, isEditor });
   } catch (e) {
     showPanel('chooser');
     $('startupError').textContent = messageFor(e);

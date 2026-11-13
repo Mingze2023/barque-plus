@@ -6,6 +6,8 @@ import { loadFirebase } from './firebase.js';
 import { setupAccounts, saveAvatar } from './account.js';
 import { newsSection } from './news.js';
 import { eventsSection } from './events.js';
+import { profileTypesSection } from './profile-types.js';
+import { showToast } from './toast.js';
 import { closeModal } from './modal.js';
 
 // ---------- Sections ----------
@@ -17,6 +19,7 @@ import { closeModal } from './modal.js';
 const SECTIONS = [
   newsSection,
   eventsSection,
+  profileTypesSection,   // editors only
 ];
 
 const DEFAULT_SECTION = 'news';
@@ -30,9 +33,14 @@ function load(key, fallback) {
 }
 
 // ---------- Build the left menu ----------
+// Sections this user may see (editorsOnly ones are hidden from non-editors)
+function visibleSections() {
+  return SECTIONS.filter(s => !s.editorsOnly || (ctx && ctx.profile.isEditor));
+}
+
 function buildNav() {
   const nav = document.getElementById('nav');
-  nav.innerHTML = SECTIONS.map(s => `
+  nav.innerHTML = visibleSections().map(s => `
     <a class="nav-link" href="#${s.id}" data-id="${s.id}" title="${s.label}">
       <svg viewBox="0 0 24 24">${s.icon}</svg>
       <span class="fade-label">${s.label}</span>
@@ -42,13 +50,13 @@ function buildNav() {
 
 // ---------- Show the section named in the address bar ----------
 // The address looks like #news, or #news/<article-id> for one article.
-let ctx = null;            // { fb, profile } while logged in
+let ctx = null;            // { fb, profile, editorMode } while logged in
 let leaveSection = null;   // cleanup for the section currently shown
 
 function showSection() {
   const [id, ...rest] = (location.hash.slice(1) || DEFAULT_SECTION).split('/');
   const param = rest.length ? decodeURIComponent(rest.join('/')) : null;
-  const section = SECTIONS.find(s => s.id === id) || SECTIONS[0];
+  const section = visibleSections().find(s => s.id === id) || SECTIONS[0];
 
   if (leaveSection) { leaveSection(); leaveSection = null; }
   const page = document.getElementById('page');
@@ -117,22 +125,47 @@ let firebase = null;
 
 function showLoggedIn(profile) {
   loggedIn = true;
-  ctx = { fb: firebase, profile };
-  document.body.classList.remove('checking', 'logged-out');
+  ctx = { fb: firebase, profile, editorMode: false };
+  document.body.classList.remove('checking', 'logged-out', 'editor-mode');
   document.body.classList.add('logged-in');
   document.getElementById('profileName').textContent = profile.username;
-  document.getElementById('profileType').textContent = profile.profileType;
+  const typeLabel = document.getElementById('profileType');
+  typeLabel.textContent = profile.isEditor ? 'Editor' : profile.profileType;
+  typeLabel.classList.toggle('is-editor', profile.isEditor);
+  buildNav();
+  drawEditorSwitch();
   avatarChoice = profile.avatar === 'female' ? 'female' : 'male';
   drawAvatar();
   showSection();
 }
 
+// ---------- Editor Mode switch (editors only, off by default) ----------
+function drawEditorSwitch() {
+  const slot = document.getElementById('rightSlot');
+  if (!ctx || !ctx.profile.isEditor) { slot.innerHTML = ''; return; }
+  slot.innerHTML = `
+    <label class="editor-switch">
+      <input type="checkbox" id="editorModeToggle">
+      <span class="switch-track"><span class="switch-thumb"></span></span>
+      <span class="switch-label">Editor Mode</span>
+    </label>`;
+  document.getElementById('editorModeToggle').addEventListener('change', (e) => {
+    ctx.editorMode = e.target.checked;
+    document.body.classList.toggle('editor-mode', ctx.editorMode);
+    showToast(ctx.editorMode ? 'Editor Mode on' : 'Editor Mode off', { seconds: 2 });
+    showSection();   // redraw the page with (or without) editing tools
+  });
+}
+
 function showLoggedOut() {
   loggedIn = false;
+  document.body.classList.remove('editor-mode');
   if (leaveSection) { leaveSection(); leaveSection = null; }
   SECTIONS.forEach(s => s.reset && s.reset());
   closeModal();
   ctx = null;
+  buildNav();
+  drawEditorSwitch();
   document.body.classList.remove('checking', 'logged-in');
   document.body.classList.add('logged-out');
   document.getElementById('page').innerHTML = '';
