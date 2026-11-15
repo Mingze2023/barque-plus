@@ -908,3 +908,9 @@ code { background: var(--yellow-100); padding: 1px 6px; border-radius: 6px; font
 .modal-field { margin-bottom: 2px; }
 .paste-preview.bad { color: var(--accent-red); }
 .section-head { margin-bottom: 14px; }
+
+/* Long pasted events: let the event box shrink so the preview line is cut
+   with "…" instead of pushing the edit/delete buttons off the screen */
+.event-link { min-width: 0; }
+.event-item:has(.trash-btn) .event-link { min-width: 0; }
+.event-title, .modal-title, .modal-body { overflow-wrap: anywhere; }
