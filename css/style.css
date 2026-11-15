@@ -881,7 +881,6 @@ code { background: var(--yellow-100); padding: 1px 6px; border-radius: 6px; font
   color: var(--yellow-400); font-family: var(--font-body); font-size: 0.95rem; font-weight: 700;
 }
 .toast-action:hover { background: rgba(255, 255, 255, 0.1); }
-<<<<<<< HEAD
 
 /* ============================================================
    Event dates (added after Step 6)
@@ -909,5 +908,3 @@ code { background: var(--yellow-100); padding: 1px 6px; border-radius: 6px; font
 .modal-field { margin-bottom: 2px; }
 .paste-preview.bad { color: var(--accent-red); }
 .section-head { margin-bottom: 14px; }
-=======
->>>>>>> ecad919c860ef339e996a1ec75e8355401d72939

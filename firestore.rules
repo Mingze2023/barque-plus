@@ -188,7 +188,6 @@ service cloud.firestore {
       }
     }
 
-<<<<<<< HEAD
     // ---------- Events: events/{eventId} ----------
     // { title, body, createdAt, start, end, dateKind, dateText }
     // Everyone can read events. Editors add, edit and delete them (and Undo
@@ -213,23 +212,6 @@ service cloud.firestore {
         && validEvent(request.resource.data)
         && request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isEditor();
-=======
-    // ---------- Events: events/{eventId} = { title, body, createdAt } ----------
-    // Everyone can read events. Editors add and delete them (and Undo puts
-    // a deleted event back exactly as it was).
-    match /events/{eventId} {
-      allow read: if isSchoolUser();
-      allow create: if isEditor()
-        && request.resource.data.keys().hasOnly(['title', 'body', 'createdAt'])
-        && request.resource.data.title is string
-        && request.resource.data.title.size() > 0
-        && request.resource.data.title.size() <= 200
-        && request.resource.data.body is string
-        && request.resource.data.body.size() <= 20000
-        && request.resource.data.createdAt is timestamp;
-      allow delete: if isEditor();
-      allow update: if false;
->>>>>>> ecad919c860ef339e996a1ec75e8355401d72939
     }
 
     // ---------- Editor check ----------

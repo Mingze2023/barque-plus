@@ -65,15 +65,7 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 ## Part F: Events (Step 5)
 
 23. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
-<<<<<<< HEAD
 24. **Add events** from the website: turn on **Editor Mode** (Step 6), open Events, and click **+ Add Event**. Type the date (`11/20`, `11/14-11/20`, `now-11/20`, or a month like `November`), then paste the email section. Use the pencil to change an event later.
-=======
-24. **Optional: add a test event by hand.** Firestore Database → **Data** → **+ Start collection** (or open `events` if it exists). Collection ID: `events`. Use **Auto-ID**, then add three fields:
-    - `title` (string): the event's name
-    - `body` (string): the description. To start a new paragraph, leave a blank line.
-    - `createdAt` (timestamp): when it was added
-    As soon as one real event exists, the placeholders disappear.
->>>>>>> ecad919c860ef339e996a1ec75e8355401d72939
 
 ## Part G: Editors (Step 6)
 
