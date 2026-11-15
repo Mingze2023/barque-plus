@@ -1,21 +1,25 @@
 // ============================================================
-// Barque+ front-end script
+// Barque+ front-end script: layout, sections, and startup.
+// Accounts live in js/account.js.
 // ============================================================
+import { loadFirebase } from './firebase.js';
+import { setupAccounts, saveAvatar } from './account.js';
+import { newsSection } from './news.js';
+import { eventsSection } from './events.js';
+import { profileTypesSection } from './profile-types.js';
+import { showToast } from './toast.js';
+import { closeModal } from './modal.js';
 
 // ---------- Sections ----------
 // Every section of the site is one entry here.
 // To add a new section later, add one object to this list.
+// Every section of the site is one entry here. Each section lives in its own
+// file in js/ and has: id, label, icon, mount(el, param, ctx), and optionally reset().
+// To add a new section later, import it above and add it to this list.
 const SECTIONS = [
-  {
-    id: 'news',
-    label: 'News',
-    // Newspaper icon
-    icon: '<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M7 9h7M7 12h7M7 15h4"/>',
-    render: () => `
-      <h2 class="page-title">News</h2>
-      <div class="placeholder">Articles will appear here (Step 4).</div>
-    `,
-  },
+  newsSection,
+  eventsSection,
+  profileTypesSection,   // editors only
 ];
 
 const DEFAULT_SECTION = 'news';
@@ -29,9 +33,14 @@ function load(key, fallback) {
 }
 
 // ---------- Build the left menu ----------
+// Sections this user may see (editorsOnly ones are hidden from non-editors)
+function visibleSections() {
+  return SECTIONS.filter(s => !s.editorsOnly || (ctx && ctx.profile.isEditor));
+}
+
 function buildNav() {
   const nav = document.getElementById('nav');
-  nav.innerHTML = SECTIONS.map(s => `
+  nav.innerHTML = visibleSections().map(s => `
     <a class="nav-link" href="#${s.id}" data-id="${s.id}" title="${s.label}">
       <svg viewBox="0 0 24 24">${s.icon}</svg>
       <span class="fade-label">${s.label}</span>
@@ -39,12 +48,21 @@ function buildNav() {
   `).join('');
 }
 
-// ---------- Show the section named in the address bar (#news etc.) ----------
-function showSection() {
-  const id = location.hash.slice(1) || DEFAULT_SECTION;
-  const section = SECTIONS.find(s => s.id === id) || SECTIONS[0];
+// ---------- Show the section named in the address bar ----------
+// The address looks like #news, or #news/<article-id> for one article.
+let ctx = null;            // { fb, profile, editorMode } while logged in
+let leaveSection = null;   // cleanup for the section currently shown
 
-  document.getElementById('page').innerHTML = section.render();
+function showSection() {
+  const [id, ...rest] = (location.hash.slice(1) || DEFAULT_SECTION).split('/');
+  const param = rest.length ? decodeURIComponent(rest.join('/')) : null;
+  const section = visibleSections().find(s => s.id === id) || SECTIONS[0];
+
+  if (leaveSection) { leaveSection(); leaveSection = null; }
+  const page = document.getElementById('page');
+  page.innerHTML = '';
+  leaveSection = section.mount(page, param, ctx) || null;
+
   document.querySelectorAll('.nav-link').forEach(link => {
     link.classList.toggle('active', link.dataset.id === section.id);
   });
@@ -86,20 +104,72 @@ const AVATARS = {
     </svg>`,
 };
 
+let avatarChoice = 'male';
+
+function drawAvatar() {
+  document.getElementById('avatarBtn').innerHTML = AVATARS[avatarChoice] || AVATARS.male;
+}
+
 function setupAvatar() {
-  const btn = document.getElementById('avatarBtn');
-  let current = load('avatar', 'male');
-
-  function draw() {
-    btn.innerHTML = AVATARS[current];
-  }
-  draw();
-
-  btn.addEventListener('click', () => {
-    current = current === 'male' ? 'female' : 'male';
-    save('avatar', current);
-    draw();
+  document.getElementById('avatarBtn').addEventListener('click', () => {
+    avatarChoice = avatarChoice === 'male' ? 'female' : 'male';
+    drawAvatar();             // change right away
+    saveAvatar(avatarChoice); // then save it to the account
   });
+}
+
+// ---------- Logged in / logged out ----------
+let loggedIn = false;
+
+let firebase = null;
+
+function showLoggedIn(profile) {
+  loggedIn = true;
+  ctx = { fb: firebase, profile, editorMode: false };
+  document.body.classList.remove('checking', 'logged-out', 'editor-mode');
+  document.body.classList.add('logged-in');
+  document.getElementById('profileName').textContent = profile.username;
+  const typeLabel = document.getElementById('profileType');
+  typeLabel.textContent = profile.isEditor ? 'Editor' : profile.profileType;
+  typeLabel.classList.toggle('is-editor', profile.isEditor);
+  buildNav();
+  drawEditorSwitch();
+  avatarChoice = profile.avatar === 'female' ? 'female' : 'male';
+  drawAvatar();
+  showSection();
+}
+
+// ---------- Editor Mode switch (editors only, off by default) ----------
+function drawEditorSwitch() {
+  const slot = document.getElementById('rightSlot');
+  if (!ctx || !ctx.profile.isEditor) { slot.innerHTML = ''; return; }
+  slot.innerHTML = `
+    <label class="editor-switch">
+      <input type="checkbox" id="editorModeToggle">
+      <span class="switch-track"><span class="switch-thumb"></span></span>
+      <span class="switch-label">Editor Mode</span>
+    </label>`;
+  document.getElementById('editorModeToggle').addEventListener('change', (e) => {
+    ctx.editorMode = e.target.checked;
+    document.body.classList.toggle('editor-mode', ctx.editorMode);
+    showToast(ctx.editorMode ? 'Editor Mode on' : 'Editor Mode off', { seconds: 2 });
+    showSection();   // redraw the page with (or without) editing tools
+  });
+}
+
+function showLoggedOut() {
+  loggedIn = false;
+  document.body.classList.remove('editor-mode');
+  if (leaveSection) { leaveSection(); leaveSection = null; }
+  SECTIONS.forEach(s => s.reset && s.reset());
+  closeModal();
+  ctx = null;
+  buildNav();
+  drawEditorSwitch();
+  document.body.classList.remove('checking', 'logged-in');
+  document.body.classList.add('logged-out');
+  document.getElementById('page').innerHTML = '';
+  document.title = 'Barque+';
 }
 
 // ---------- Date in the masthead ----------
@@ -110,10 +180,26 @@ function showDate() {
 }
 
 // ---------- Start ----------
-buildNav();
-showSection();
-showDate();
-setupAvatar();
-setupSidebar('leftSidebar', 'leftToggle', 'leftSidebar', 'Expand menu', 'Collapse menu');
-setupSidebar('rightSidebar', 'rightToggle', 'rightSidebar', 'Expand profile', 'Collapse profile');
-window.addEventListener('hashchange', showSection);
+async function start() {
+  buildNav();
+  showDate();
+  setupAvatar();
+  setupSidebar('leftSidebar', 'leftToggle', 'leftSidebar', 'Expand menu', 'Collapse menu');
+  setupSidebar('rightSidebar', 'rightToggle', 'rightSidebar', 'Expand profile', 'Collapse profile');
+  window.addEventListener('hashchange', () => { if (loggedIn) showSection(); });
+
+  try {
+    firebase = await loadFirebase();
+  } catch (e) {
+    showLoggedOut();
+    document.getElementById('authChooser').hidden = true;
+    document.getElementById('startupError').textContent = e.stage === 'config'
+      ? 'Firebase settings are missing in js/firebase-config.js.'
+      : 'Could not reach Firebase. The network may be blocking www.gstatic.com.';
+    return;
+  }
+
+  setupAccounts(firebase, { onLogin: showLoggedIn, onLogout: showLoggedOut });
+}
+
+start();

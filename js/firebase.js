@@ -12,15 +12,21 @@ export function isConfigFilledIn() {
   return Object.values(firebaseConfig).every(v => v && !String(v).includes('PASTE_HERE'));
 }
 
-// Loads Firebase and returns { app, db, firestore }.
-//   db        = the Barque+ database
-//   firestore = Firebase's database functions (addDoc, collection, ...)
+// Loads Firebase and returns:
+//   app        the Firebase app
+//   db         the Barque+ database
+//   auth       the login system
+//   firestore  Firebase's database functions (doc, getDoc, setDoc, ...)
+//   authApi    Firebase's login functions (signInWithEmailAndPassword, ...)
 // Throws an Error whose .stage says what failed: 'library' or 'config'.
 export async function loadFirebase() {
-  let appModule, firestore;
+  let appModule, firestore, authApi;
   try {
-    appModule = await import(`${BASE}/firebase-app.js`);
-    firestore = await import(`${BASE}/firebase-firestore.js`);
+    [appModule, firestore, authApi] = await Promise.all([
+      import(`${BASE}/firebase-app.js`),
+      import(`${BASE}/firebase-firestore.js`),
+      import(`${BASE}/firebase-auth.js`),
+    ]);
   } catch (e) {
     const err = new Error('Could not download Firebase from www.gstatic.com.');
     err.stage = 'library';
@@ -35,5 +41,6 @@ export async function loadFirebase() {
 
   const app = appModule.initializeApp(firebaseConfig);
   const db = firestore.getFirestore(app);
-  return { app, db, firestore };
+  const auth = authApi.getAuth(app);
+  return { app, db, auth, firestore, authApi };
 }

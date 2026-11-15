@@ -1,4 +1,4 @@
-# Barque+ Step 1 setup (no terminal needed)
+# Barque+ setup (no terminal needed)
 
 Works from a school Windows computer or a Mac. Takes about 20 minutes.
 Button names on GitHub and Firebase sometimes change slightly; look for the closest match.
@@ -16,7 +16,7 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
    - Under **Source**, choose **Deploy from a branch**
    - Under **Branch**, choose **main** and **/ (root)**, then click **Save**
    - Wait 1 to 2 minutes and refresh. The page shows "Your site is live at `https://YOUR-USERNAME.github.io/barque-plus/`".
-5. **Open that link.** You should see the Barque+ checklist. The first two checks are green and "Firebase settings filled in" is red. That's expected.
+5. **Open that link.** The page will say Firebase settings are missing until you finish Part C. That's expected.
 
 ## Part B: Firebase (accounts and the database)
 
@@ -43,21 +43,63 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 10. **Open the code editor.** On your GitHub repository page, press the **`.`** (period) key. This opens github.dev, which is VS Code in your browser.
 11. **Paste your settings.** Open `js/firebase-config.js`. Replace each `PASTE_HERE` with the matching value from step 7. Keep the quotation marks and commas.
 12. **Save to GitHub.** Click the **Source Control** icon on the left (it shows a "1"). Type a message like `Add Firebase settings` and click **Commit & Push**.
-13. **Test it.** Wait about a minute, then open your github.io link and force-refresh (Ctrl+F5 on Windows, Cmd+Shift+R on Mac). Type a message and click **Save**. When all five checks are green, Step 1 is done.
+13. **Wait about a minute**, then open your github.io link. With Step 3 in place, you should see the Barque+ login sidebar.
 
-## If a check is red
+## Part D: Accounts (Step 3)
 
-| Red check | Fix |
+14. **Turn on email and password logins.** In the Firebase console, open **Authentication** (under **Build** or **Security** in the left menu). Click **Get started** if it's your first time. On the **Sign-in method** tab, click **Email/Password**, turn on the **first** switch only (leave "Email link" off), and click **Save**.
+15. **Publish the new rules.** Open **Firestore Database → Rules**, replace everything with the contents of `firestore.rules`, and click **Publish**.
+16. **Allow your website.** In **Authentication → Settings → Authorized domains**, click **Add domain** and type `YOUR-USERNAME.github.io`.
+17. **Send email links to your own page.** In **Authentication → Templates**, open **Email address verification** and click the **pencil** icon. At the bottom, click **Customize action URL** and type
+    `https://YOUR-USERNAME.github.io/barque-plus/auth-action.html`
+    then click **Save**. This applies to the password reset email too. While you're there, you can set the **Sender name** to `Barque+`.
+
+## Part E: News (Step 4)
+
+18. **Let GitHub Actions publish the site.** On GitHub, open **Settings → Pages**. Under **Build and deployment → Source**, choose **GitHub Actions**. (Do this before pushing the Step 4 files.)
+19. **Publish the new rules.** Firestore Database → Rules → paste `firestore.rules` → **Publish**.
+20. **Push the Step 4 files** with GitHub Desktop. The **Actions** tab on GitHub shows a run called "Scrape news and publish site". When it has a green check, the site is updated.
+21. **Get the real news.** Actions tab → **Scrape news and publish site** (left list) → **Run workflow** → **Run workflow**. After a few minutes, the sample articles are replaced with the Barque's articles. From then on it runs by itself every morning.
+22. **Pull the new news** in GitHub Desktop (**Fetch origin**, then **Pull origin**) before your next commit, since GitHub saved a new `data/news.json`.
+
+## Part F: Events (Step 5)
+
+23. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
+<<<<<<< HEAD
+24. **Add events** from the website: turn on **Editor Mode** (Step 6), open Events, and click **+ Add Event**. Type the date (`11/20`, `11/14-11/20`, `now-11/20`, or a month like `November`), then paste the email section. Use the pencil to change an event later.
+=======
+24. **Optional: add a test event by hand.** Firestore Database → **Data** → **+ Start collection** (or open `events` if it exists). Collection ID: `events`. Use **Auto-ID**, then add three fields:
+    - `title` (string): the event's name
+    - `body` (string): the description. To start a new paragraph, leave a blank line.
+    - `createdAt` (timestamp): when it was added
+    As soon as one real event exists, the placeholders disappear.
+>>>>>>> ecad919c860ef339e996a1ec75e8355401d72939
+
+## Part G: Editors (Step 6)
+
+25. **Add the editors.** Open `firestore.rules` and find the **EDITOR LIST** section near the top. Put the emails inside the brackets, in lowercase and in quotes, separated by commas:
+    `return ['mingze@bsd405.org', 'someone@bsd405.org'];`
+26. **Publish the rules** (Firestore Database → Rules → paste the whole file → **Publish**). Whenever you add or remove an editor, edit this section and publish again. The file in your project is your record of it; the Firebase console is what counts.
+27. **Log out and back in** with an editor account. The Profile Type shows **Editor**, an **Editor Mode** switch appears in the right sidebar, and **Set Profile Types** appears in the menu.
+
+**Testing switch:** email verification is currently turned **off** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). Turn both back to `true` and publish the rules once school email can receive the verification emails.
+
+## If something doesn't work
+
+| Problem | Fix |
 |---|---|
-| Firebase code downloaded | The network is blocking www.gstatic.com. Try another network. |
-| Firebase settings filled in | Some `PASTE_HERE` is left in `js/firebase-config.js`, or the change wasn't committed yet. |
-| Database can be read / can save: "permission denied" | The rules weren't published. Redo step 9. |
-| Database can be read: "No database found" | Redo step 8. |
-| Database can be read: "Could not reach the database" | The network is blocking firestore.googleapis.com. |
-| Page didn't change after editing | Wait a minute, then force-refresh. GitHub Pages takes about a minute to update. |
+| Sidebar says "Could not reach Firebase" | The network is blocking www.gstatic.com. Try another network. |
+| Sidebar says "Firebase settings are missing" | Some `PASTE_HERE` is left in `js/firebase-config.js`. |
+| "Firebase refused to save your profile" | The Step 3 rules weren't published. Redo step 15. |
+| Creating an account gives an error about the sign-in method | Email/Password isn't turned on. Redo step 14. |
+| The verification email never arrives | Check the junk folder. School email sometimes holds outside emails. |
+| Page didn't change after pushing | Check the Actions tab: wait for the green check, then force-refresh. |
+| Actions run has a red X at "Scrape the Barque's news" | Click it to see the log. The scraper prints what it found and what failed. |
+| Actions run has a red X at "Publish to GitHub Pages" | Settings → Pages → Source must be **GitHub Actions** (step 18). |
+| Votes or comments say "permission-denied" | The Step 4 rules weren't published. Redo step 19. |
 
 ## Good to know
 
 - The values in `firebase-config.js` are meant to be public. The security rules decide what people can do.
-- Until Step 3 adds logins, anyone with the link can post short test messages. Step 3 removes the test page and locks everything behind school accounts.
-- Every later step works the same way: edit in github.dev, Commit & Push, then refresh the github.io link.
+- Only logged-in, verified @bsd405.org accounts can read or save anything in the database.
+- Day to day: edit in the VS Code app, preview with Live Preview, then Commit and Push in GitHub Desktop.

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233a2414'/%3E%3Ctext x='8' y='46' font-family='Georgia,serif' font-weight='900' font-size='38' fill='%23fffdf8'%3EB%3C/text%3E%3Ctext x='36' y='40' font-family='Georgia,serif' font-weight='900' font-size='30' fill='%23f2b705'%3E+%3C/text%3E%3C/svg%3E">
+  <title>Barque+</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<!-- This page opens from the links in Barque+ emails
+     (verify your email / reset your password). -->
+<body class="action-page">
+  <main class="action-card">
+    <div class="auth-brand">Barque<span class="plus">+</span></div>
+
+    <h3 class="auth-heading" id="actionHeading">One moment…</h3>
+    <p class="code-note" id="actionNote" hidden></p>
+    <p class="form-error" id="actionError" role="alert"></p>
+
+    <!-- Only for "reset password" links -->
+    <form class="auth-form" id="resetForm" novalidate hidden>
+      <label class="field">
+        <span>New password (at least 6 characters)</span>
+        <input type="password" id="newPassword" autocomplete="new-password">
+      </label>
+      <label class="field">
+        <span>Type password again</span>
+        <input type="password" id="newConfirm" autocomplete="new-password">
+      </label>
+      <p class="form-error" id="resetError" role="alert"></p>
+      <button type="submit" class="btn-primary" id="resetBtn">Set New Password</button>
+    </form>
+
+    <a class="btn-primary btn-link" id="homeLink" href="./" hidden>Go to Barque+</a>
+  </main>
+
+  <script type="module" src="js/auth-action.js"></script>
+</body>
+</html>
