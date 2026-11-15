@@ -28,7 +28,7 @@ service cloud.firestore {
     // Type them in lowercase, in quotes, separated by commas, e.g.
     //   return ['mingze@bsd405.org', 'someone@bsd405.org'];
     function editorEmails() {
-      return [];
+      return ['s-shimi@bsd405.org'];
     }
     // ============================================================
 
