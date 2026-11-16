@@ -6,6 +6,7 @@ import { loadFirebase } from './firebase.js';
 import { setupAccounts, saveAvatar } from './account.js';
 import { newsSection } from './news.js';
 import { eventsSection } from './events.js';
+import { artSection } from './art.js';
 import { profileTypesSection } from './profile-types.js';
 import { showToast } from './toast.js';
 import { closeModal } from './modal.js';
@@ -19,6 +20,7 @@ import { closeModal } from './modal.js';
 const SECTIONS = [
   newsSection,
   eventsSection,
+  artSection,
   profileTypesSection,   // editors only
 ];
 

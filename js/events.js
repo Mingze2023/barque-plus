@@ -152,7 +152,11 @@ function draw(el, events, usingPlaceholders, ctx) {
   list.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => openEventEditor(ctx, ordered[Number(b.dataset.edit)])));
   list.querySelectorAll('[data-delete]').forEach((b) => b.addEventListener('click', () => deleteEvent(ctx, ordered[Number(b.dataset.delete)])));
 
-  el.querySelector('#eventsSampleNote').hidden = !usingPlaceholders;
+  const note = el.querySelector('#eventsSampleNote');
+  note.hidden = !usingPlaceholders;
+  note.textContent = ctx.editorMode
+    ? 'These are placeholder events. They are not saved anywhere, so they have no edit or delete buttons. They disappear as soon as you add a real event with "+ Add Event". Real events get a pencil (edit) and a trash bin (delete).'
+    : 'These are placeholder events. They disappear as soon as an editor adds a real one.';
 }
 
 // ---------- Editor tools ----------

@@ -914,3 +914,134 @@ code { background: var(--yellow-100); padding: 1px 6px; border-radius: 6px; font
 .event-link { min-width: 0; }
 .event-item:has(.trash-btn) .event-link { min-width: 0; }
 .event-title, .modal-title, .modal-body { overflow-wrap: anywhere; }
+
+/* ============================================================
+   Student Art (Step 7)
+   ============================================================ */
+.art-head { margin-bottom: 10px; }
+.art-wrap { position: relative; }
+
+/* The scrolling stage: one piece per screen, snapping into place */
+.art-stage {
+  height: 600px;                      /* replaced in js/art.js to fill the window */
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  border-radius: 18px;
+  background: var(--brown-900);
+  outline: none;
+  scrollbar-width: none;
+}
+.art-stage::-webkit-scrollbar { display: none; }
+.art-stage:focus-visible { box-shadow: 0 0 0 3px rgba(242, 183, 5, 0.6); }
+
+.art-card {
+  position: relative;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 22px 0;
+  /* sliding-card feel: pieces off screen shrink and dim */
+  transform: scale(0.93);
+  opacity: 0.45;
+  transition: transform 0.45s var(--ease), opacity 0.45s var(--ease);
+}
+.art-card.active { transform: none; opacity: 1; }
+
+.art-frame {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, #4d311b, #2a190d);
+}
+.art-image { max-width: 100%; max-height: 100%; object-fit: contain; display: block; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
+.art-loading { color: var(--brown-300); font-style: italic; }
+
+/* Text pieces */
+.art-text {
+  width: min(640px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 36px 40px;
+  background: var(--paper);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.art-text-inner p { font-family: var(--font-display); font-size: 1.15rem; line-height: 1.75; margin: 0 0 18px; color: var(--brown-900); }
+.art-text-inner p:first-child { font-weight: 700; font-size: 1.4rem; }
+
+/* Video and audio */
+.art-embed { width: min(960px, 100%); aspect-ratio: 16 / 9; max-height: 100%; }
+.art-embed.tall { aspect-ratio: auto; height: min(420px, 100%); }
+.art-embed iframe { width: 100%; height: 100%; border: 0; border-radius: 10px; background: #000; }
+.art-video { max-width: 100%; max-height: 100%; border-radius: 10px; background: #000; }
+.art-audio { display: flex; flex-direction: column; align-items: center; gap: 22px; width: min(520px, 90%); }
+.art-audio svg, .art-media-sample svg { width: 90px; height: 90px; fill: none; stroke: var(--yellow-500); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.art-audio audio { width: 100%; }
+.art-media-sample { display: flex; flex-direction: column; align-items: center; gap: 14px; color: var(--brown-300); font-weight: 600; letter-spacing: 0.04em; }
+
+/* Caption bar under each piece */
+.art-info { display: flex; align-items: center; gap: 10px; padding: 14px 4px 18px; color: var(--white); }
+.art-caption { flex: 1; min-width: 0; }
+.art-type {
+  display: inline-block; margin-bottom: 4px; padding: 1px 9px; border-radius: 999px;
+  background: rgba(242, 183, 5, 0.18); color: var(--yellow-400);
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.art-title { margin: 0; font-family: var(--font-display); font-size: 1.45rem; overflow-wrap: anywhere; }
+.art-meta { color: var(--brown-300); font-size: 0.9rem; margin-top: 2px; }
+.art-info .edit-btn:hover, .art-info .trash-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* The ••• button */
+.art-more {
+  width: 52px; height: 40px; flex-shrink: 0; border: none; border-radius: 999px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  background: rgba(255, 255, 255, 0.1); transition: background 0.2s;
+}
+.art-more span { width: 6px; height: 6px; border-radius: 50%; background: var(--yellow-400); }
+.art-more:hover, .art-more[aria-expanded="true"] { background: var(--yellow-500); }
+.art-more:hover span, .art-more[aria-expanded="true"] span { background: var(--brown-900); }
+
+/* Background text panel: slides up over the piece */
+.art-description {
+  position: absolute; left: 22px; right: 22px; bottom: 82px;
+  max-height: 60%; overflow-y: auto;
+  padding: 20px 24px; border-radius: 14px;
+  background: rgba(255, 253, 248, 0.97); color: var(--brown-900);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.35);
+  animation: slideUp 0.3s var(--ease);
+}
+.art-description[hidden] { display: none; }
+.art-description h3 { margin: 0 0 8px; font-family: var(--font-display); }
+.art-description p { margin: 0 0 10px; line-height: 1.6; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+/* Dots on the right: one per piece */
+.art-dots {
+  position: absolute; right: -26px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.art-dots button {
+  width: 10px; height: 10px; padding: 0; border: none; border-radius: 50%; cursor: pointer;
+  background: var(--brown-300); transition: transform 0.2s, background 0.2s;
+}
+.art-dots button.active { background: var(--yellow-500); transform: scale(1.4); }
+
+/* "Add an art piece" popup */
+.type-choice { display: flex; gap: 6px; padding: 4px; margin-bottom: 14px; background: var(--yellow-100); border-radius: 12px; }
+.type-option {
+  flex: 1; height: 38px; border: none; border-radius: 9px; background: transparent; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.92rem; font-weight: 700; color: var(--brown-600);
+}
+.type-option.selected { background: var(--brown-800); color: var(--white); }
+.type-panel[hidden] { display: none; }
+.type-panel { margin-bottom: 6px; }
+.art-upload-preview { display: block; max-width: 100%; max-height: 200px; margin: 6px auto 10px; border-radius: 8px; }
+.modal .field { margin-bottom: 10px; }
+.modal .field input[type="file"] { height: auto; padding: 10px; }

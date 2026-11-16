@@ -16,6 +16,9 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `js/news.js` | News section: list, search, sort, votes, views, articles, comments |
 | `js/events.js` | Events section: list of events, popups, placeholders, editor tools |
 | `js/event-dates.js` | Reads typed event dates (11/20, 11/14-11/20, now-11/20, November) |
+| `js/art.js` | Student Art section: full-page pieces, ••• background text, editor tools |
+| `js/images.js` | Shrinks pictures so they fit in Firestore (used by Student Art, later Clubs and the map) |
+| `js/embeds.js` | Turns YouTube / Vimeo / Google Drive / SoundCloud / file links into players |
 | `js/profile-types.js` | Set Profile Types page (editors only) |
 | `js/toast.js` | Small message at the bottom of the screen, with Undo |
 | `js/modal.js` | The popup window any section can use |

@@ -74,6 +74,13 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 26. **Publish the rules** (Firestore Database → Rules → paste the whole file → **Publish**). Whenever you add or remove an editor, edit this section and publish again. The file in your project is your record of it; the Firebase console is what counts.
 27. **Log out and back in** with an editor account. The Profile Type shows **Editor**, an **Editor Mode** switch appears in the right sidebar, and **Set Profile Types** appears in the menu.
 
+## Part H: Student Art (Step 7)
+
+28. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). The editor list already includes `s-shimi@bsd405.org`.
+29. **Add art** in Editor Mode: Student Art → **+ Add Art** → choose Picture, Text, Video or Audio.
+    - Pictures are shrunk automatically. iPhone HEIC photos must be exported as JPG first.
+    - Google Drive videos and audio must be shared as **"Anyone with the link"**, or they won't play for others.
+
 **Testing switch:** email verification is currently turned **off** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). Turn both back to `true` and publish the rules once school email can receive the verification emails.
 
 ## If something doesn't work
