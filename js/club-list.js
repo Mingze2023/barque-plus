@@ -1,0 +1,77 @@
+// ============================================================
+// The school's club list (built in)
+//
+// Copied from the table "BELLEVUE HIGH SCHOOL 2025-26 ASB APPROVED CLUBS"
+// (ASB Membership required to participate in Clubs at Bellevue High School) on
+// https://bellevuehigh.bsd405.org/student-life/clubs-and-activities
+//
+// The daily GitHub Action (scripts/scrape_clubs.py) also re-reads that page and
+// saves data/clubs.json. "Add Clubs from School Website" uses that file when it
+// exists, and this built-in list when it doesn't.
+// ============================================================
+export const SCHOOL_CLUBS_PAGE = 'https://bellevuehigh.bsd405.org/student-life/clubs-and-activities';
+
+export const SCHOOL_CLUBS = [
+  {"name": "Aerospace", "advisor": "Ms. Henry", "meetingDay": "Tuesdays", "room": "Room 1112", "meetingTime": "3:30 - 4:00"},
+  {"name": "AAPI", "advisor": "Ms. Hurley", "meetingDay": "Tuesdays", "room": "Room 2117", "meetingTime": "3:30 - 4:00"},
+  {"name": "AI Club", "advisor": "Mr. Kit George", "meetingDay": "Mondays", "room": "Room 0105", "meetingTime": "3:30 - 4:00"},
+  {"name": "American Lung Cancer Screening", "advisor": "Mr. Murphy", "meetingDay": "Every other Friday", "room": "Room 1116", "meetingTime": "3:30 - 4:00"},
+  {"name": "Art Club", "advisor": "Ms. Caufield", "meetingDay": "Thursdays", "room": "Room 1126", "meetingTime": "3:30 - 4:00"},
+  {"name": "Astronomy", "advisor": "Mr. Shin", "meetingDay": "Tuesdays", "room": "Room 1121", "meetingTime": "3:30 - 4:00"},
+  {"name": "Auto Club", "advisor": "Mr. Mcialwain", "meetingDay": "Tuesdays", "room": "Room 0110", "meetingTime": "3:30 - 4:30"},
+  {"name": "Band", "advisor": "Mr. George, Mr. Harvey", "meetingDay": "Class Time", "room": "Music Wing", "meetingTime": "Varies"},
+  {"name": "Barque", "advisor": "Mr. Abrahamson", "meetingDay": "Class Time", "room": "Room 2102", "meetingTime": "5th Period"},
+  {"name": "Bellevue Booked", "advisor": "Ms. Carruthers", "meetingDay": "Thursdays monthly", "room": "Room 2120", "meetingTime": "3:30 - 4:00"},
+  {"name": "Brazil Club", "advisor": "Ms. Bennmouffok", "meetingDay": "First Thursdays of the month", "room": "Room 2104", "meetingTime": "3:15 - 4:00"},
+  {"name": "Bright Hearts Initiative", "advisor": "Mr. Carabat", "meetingDay": "Mondays", "room": "Room 2112", "meetingTime": "3:30 - 4:00"},
+  {"name": "Black Student Union (BSU)", "advisor": "Mr. Mckinney", "meetingDay": "Wednesdays bi-weekly", "room": "Room 1118", "meetingTime": "1:00 - 1:30"},
+  {"name": "Catalyst Chemistry", "advisor": "Ms. Benmouffok, Dr. Jedlicka", "meetingDay": "Fridays & Thursdays (Alternating)", "room": "Room 2104", "meetingTime": "7:30am - 8:00am and 3:30pm - 4:00pm (Alternating)"},
+  {"name": "Chess Club", "advisor": "Mr. Vandyke", "meetingDay": "Mondays & Thursdays", "room": "Room 1103", "meetingTime": "3:30 - 4:00"},
+  {"name": "Chinese Club", "advisor": "Ms. Li", "meetingDay": "Tuesdays", "room": "Room 2115", "meetingTime": "3:30 - 4:00"},
+  {"name": "Choir", "advisor": "Mr. Jacobsen", "meetingDay": "Monday - Friday", "room": "Room 1405", "meetingTime": "Varies"},
+  {"name": "Coding for Medicine", "advisor": "Ms. Bennmoufuk", "meetingDay": "Wednesdays", "room": "Room 2104", "meetingTime": "3:30 - 4:15"},
+  {"name": "Dance Club", "advisor": "Ms. Youmans", "meetingDay": "Fridays", "room": "Room 2105", "meetingTime": "3:30 - 4:15"},
+  {"name": "DECA", "advisor": "Ms. Riggers", "meetingDay": "Tuesdays", "room": "Room 1130", "meetingTime": "3:30 - 4:00"},
+  {"name": "Diversity Inclusion Club", "advisor": "Ms. Farquhar", "meetingDay": "Thursdays", "room": "Room 2112", "meetingTime": "3:30 - 4:00"},
+  {"name": "Dungeons and Dragons", "advisor": "Ms. Caufield", "meetingDay": "Fridays", "room": "Room 1126", "meetingTime": "3:30 - 5:00"},
+  {"name": "Economic and Public Policy", "advisor": "Ms. Riggers", "meetingDay": "Every other Thursday", "room": "Room 1130", "meetingTime": "3:30 - 4:00"},
+  {"name": "Fashion Club", "advisor": "Ms. Yale", "meetingDay": "Mondays & Wednesdays", "room": "Room 1125", "meetingTime": "3:30 - 4:00"},
+  {"name": "Fencing Club (No swords, only footwork)", "advisor": "Mr. Shin", "meetingDay": "Fridays", "room": "Room 1121", "meetingTime": "3:30 - 4:00"},
+  {"name": "Finance Club", "advisor": "Mr. Bright", "meetingDay": "Tuesdays", "room": "Room 0105", "meetingTime": "3:15 - 4:00"},
+  {"name": "Founders Club", "advisor": "Mr. Hong", "meetingDay": "Thursdays", "room": "Room 0108", "meetingTime": "3:30 - 4:30"},
+  {"name": "Fellowship of Christian Athletes (FCA)", "advisor": "Ms. Kim", "meetingDay": "Fridays", "room": "Room 1113", "meetingTime": "3:30 - 4:00"},
+  {"name": "Game Dev", "advisor": "Mr. Bennet", "meetingDay": "", "room": "Room 0107", "meetingTime": ""},
+  {"name": "Geography and History Club", "advisor": "Ms. Nelson", "meetingDay": "Thursdays", "room": "Room 2113", "meetingTime": "3:30 - 4:00"},
+  {"name": "Girls Who Code Club", "advisor": "Ms. Stevens", "meetingDay": "Fridays bi-weekly", "room": "Room 2107", "meetingTime": "3:30 - 4:00"},
+  {"name": "Glamor Gals", "advisor": "Ms. Arnold", "meetingDay": "Every other Thursday", "room": "Room 1105", "meetingTime": "3:30 - 4:00"},
+  {"name": "Green Collective", "advisor": "Ms. Arnold", "meetingDay": "Tuesdays", "room": "Room 1105", "meetingTime": "3:30 - 4:00"},
+  {"name": "HOSA", "advisor": "Mr. Manning", "meetingDay": "Every other Monday", "room": "Room 1104", "meetingTime": "3:30 - 4:00"},
+  {"name": "Indian Student Association (ISA)", "advisor": "Mr. Murphy", "meetingDay": "Tuesdays", "room": "Room 1116", "meetingTime": "3:30 - 4:00"},
+  {"name": "Jewish Student Union", "advisor": "Ms. Golding", "meetingDay": "Second Tuesday of the month", "room": "Room 2106", "meetingTime": "3:30 - 4:00"},
+  {"name": "K Pop Club", "advisor": "Ms. Stevens", "meetingDay": "Every other Thursday", "room": "Room 2107", "meetingTime": "3:30 - 4:00"},
+  {"name": "Key Club", "advisor": "Mr. Murphy", "meetingDay": "Every other Thursday", "room": "Room 1116", "meetingTime": "3:30 - 4:00"},
+  {"name": "Law Honor Society", "advisor": "Ms. Nelson", "meetingDay": "Fridays", "room": "Room 2113", "meetingTime": "3:35 - 4:30"},
+  {"name": "Link Crew", "advisor": "Ms. Hurley", "meetingDay": "Mondays", "room": "Room 2117", "meetingTime": "3:30 - 4:15"},
+  {"name": "Made for More", "advisor": "Dr. Jedlicka", "meetingDay": "Mondays", "room": "Room 2104", "meetingTime": "3:30 - 4:15"},
+  {"name": "Math Club", "advisor": "Mr. Kralovich", "meetingDay": "Mondays", "room": "Room 1120", "meetingTime": "3:30 - 4:00"},
+  {"name": "Mental Health Awareness Club", "advisor": "Ms. Dahl, Ms. Odegaard", "meetingDay": "Thursdays", "room": "Room 2103", "meetingTime": "3:30 - 4:15"},
+  {"name": "Mock Trial", "advisor": "Ms. Yanamandra", "meetingDay": "Mondays", "room": "Room 1110", "meetingTime": "3:30 - 4:00"},
+  {"name": "Model U.N.", "advisor": "Ms. Beito", "meetingDay": "Every other Thursday", "room": "Room 1113", "meetingTime": "3:30 - 4:00"},
+  {"name": "Muslim Student Association", "advisor": "Ms. Golding", "meetingDay": "Second Thursday of the month", "room": "Room 2106", "meetingTime": "3:30 - 4:00"},
+  {"name": "National Arts Honor Society", "advisor": "Ms. Yale, Ms. Caulfield", "meetingDay": "Tuesdays", "room": "Room 1125", "meetingTime": "3:30 - 4:00"},
+  {"name": "National French Honors Society", "advisor": "Ms. Ibitowa, Ms. Nelson", "meetingDay": "Second Tuesday of the month", "room": "Room 2121", "meetingTime": "3:30 - 4:00"},
+  {"name": "National Honors Society", "advisor": "Ms. King", "meetingDay": "First Thursday of the month", "room": "Library", "meetingTime": "3:30 - 4:00"},
+  {"name": "National Spanish Honor Society", "advisor": "Ms. King", "meetingDay": "First Monday of the month", "room": "Room 2114", "meetingTime": "3:30 - 4:00"},
+  {"name": "Orchestra", "advisor": "Mr. Kam", "meetingDay": "Monday - Friday", "room": "Room 1405/1406", "meetingTime": "Varies"},
+  {"name": "Red Cross", "advisor": "Mr. Tomihiro", "meetingDay": "Thursdays", "room": "Room 2101", "meetingTime": "3:00 - 3:30"},
+  {"name": "Research Club", "advisor": "Mr. Wright", "meetingDay": "First Wednesday of the month", "room": "Room 2103", "meetingTime": "7:00am - 8:00am"},
+  {"name": "Robotics", "advisor": "Mr. Shin", "meetingDay": "Mondays & Thursdays", "room": "Room 1303", "meetingTime": "3:30 - 5:30"},
+  {"name": "Salvation Army", "advisor": "Ms. Caufield", "meetingDay": "Once a month on Tuesday", "room": "Room 1126", "meetingTime": "3:30 - 4:00"},
+  {"name": "Science Bowl", "advisor": "Mr. Abrahamson", "meetingDay": "Tuesdays", "room": "Room 2102", "meetingTime": "3:30 - 4:00"},
+  {"name": "Science Olympiad", "advisor": "Dr. Bangerter", "meetingDay": "Mondays", "room": "Room 2110", "meetingTime": "3:30 - 4:30"},
+  {"name": "Smiles for All", "advisor": "Mr. Takami", "meetingDay": "Thursdays", "room": "Room 1104", "meetingTime": ""},
+  {"name": "Speech and Debate", "advisor": "Ms. McCormick", "meetingDay": "Mondays & Tuesdays", "room": "Room 1115", "meetingTime": "3:30 - 4:30"},
+  {"name": "Theater", "advisor": "Mr. Kaskes", "meetingDay": "Mondays", "room": "Room 1404", "meetingTime": "3:30 - 4:00"},
+  {"name": "UNESCO", "advisor": "Ms. Li", "meetingDay": "Every other Monday", "room": "Room 2115", "meetingTime": "3:30 - 4:00"},
+  {"name": "UNICEF", "advisor": "Mr. Saltz", "meetingDay": "Every other Monday", "room": "Room 1116", "meetingTime": "3:30 - 4:00"},
+];

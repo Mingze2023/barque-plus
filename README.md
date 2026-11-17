@@ -19,6 +19,9 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `js/art.js` | Student Art section: full-page pieces, ••• background text, editor tools |
 | `js/images.js` | Shrinks pictures so they fit in Firestore (used by Student Art, later Clubs and the map) |
 | `js/embeds.js` | Turns YouTube / Vimeo / Google Drive / SoundCloud / file links into players |
+| `js/clubs.js` | Club Information: bulletin board, club pages, editor tools |
+| `js/club-list.js` | The school's club list (advisor, day, time, room), built in |
+| `scripts/scrape_clubs.py` | Re-reads the school's club table every day into `data/clubs.json` |
 | `js/profile-types.js` | Set Profile Types page (editors only) |
 | `js/theme.js` | Season themes (Settings → Spring, Summer, Fall, Winter); colors are in `css/style.css` |
 | `js/toast.js` | Small message at the bottom of the screen, with Undo |

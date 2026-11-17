@@ -7,6 +7,7 @@ import { setupAccounts, saveAvatar, saveTheme } from './account.js';
 import { newsSection } from './news.js';
 import { eventsSection } from './events.js';
 import { artSection } from './art.js';
+import { clubsSection } from './clubs.js';
 import { profileTypesSection } from './profile-types.js';
 import { showToast } from './toast.js';
 import { THEMES, applyTheme, currentTheme, isTheme } from './theme.js';
@@ -23,6 +24,7 @@ const SECTIONS = [
   newsSection,
   eventsSection,
   artSection,
+  clubsSection,
   profileTypesSection,   // editors only
 ];
 

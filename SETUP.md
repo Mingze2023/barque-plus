@@ -81,6 +81,13 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
     - Pictures are shrunk automatically. iPhone HEIC photos must be exported as JPG first.
     - Google Drive videos and audio must be shared as **"Anyone with the link"**, or they won't play for others.
 
+## Part I: Club Information (Step 8)
+
+30. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
+31. **Add the school's clubs** in Editor Mode: Club Information → **Add Clubs from School Website** → **Add Clubs**. This adds every club from the school's ASB club table, each with its advisor, meeting day, time and room. Use **+ Add Club** for any club that isn't on that list.
+32. Open a club and click **Edit Club** to change its advisor, meeting day, time or room, or to add its information, news and picture.
+33. The daily GitHub Action re-reads the school's club table into `data/clubs.json`. Clicking **Add Clubs from School Website** again later offers only clubs that aren't on the board yet (it never changes or re-adds clubs you've edited or deleted).
+
 **Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 
 ## If something doesn't work

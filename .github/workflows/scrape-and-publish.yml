@@ -3,7 +3,7 @@
 #
 # Runs:
 #   - every time you push changes  -> publishes the site
-#   - every day at about 6 a.m.     -> scrapes news, then publishes
+#   - every day at about 6 a.m.     -> scrapes news and the club list, then publishes
 #   - when you click "Run workflow" -> scrapes news, then publishes
 #     (GitHub website: Actions tab > Scrape news and publish site)
 #
@@ -25,7 +25,7 @@ on:
         default: false
 
 permissions:
-  contents: write   # to save the updated news.json
+  contents: write   # to save the updated news.json and clubs.json
   pages: write      # to publish the site
   id-token: write   # required by GitHub Pages
 
@@ -54,16 +54,22 @@ jobs:
           pip install beautifulsoup4
           python scripts/scrape_news.py
 
+      - name: Read the school's club list
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: python scripts/scrape_clubs.py
+
       - name: Save the news to the repository
         if: github.event_name != 'push'
         run: |
           git config user.name "Barque+ news bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/news.json
+          if [ -f data/clubs.json ]; then git add data/clubs.json; fi
           if git diff --staged --quiet; then
-            echo "No news changes."
+            echo "No news or club changes."
           else
-            git commit -m "Update news ($(date -u +%Y-%m-%d))"
+            git commit -m "Update news and clubs ($(date -u +%Y-%m-%d))"
             git push
           fi
 

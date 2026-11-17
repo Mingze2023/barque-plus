@@ -249,6 +249,47 @@ service cloud.firestore {
       allow delete: if isEditor();
     }
 
+    // ---------- Club Information ----------
+    // clubs/{clubId}       { name, advisor, meetingDay, meetingTime, room,
+    //                        description, hasImage, createdAt, updatedAt }
+    // clubImages/{clubId}  { data }  the club's shrunk picture
+    // Everyone can look; editors add, edit and delete.
+    // (Club Leaders will be allowed to edit their own club in Step 16.)
+    // An optional detail (advisor, meeting day, time, room): text up to 200 characters
+    function shortText(d, key) {
+      return !(key in d) || (d[key] is string && d[key].size() <= 200);
+    }
+    function validClub(d) {
+      return d.keys().hasOnly(['name', 'advisor', 'meetingDay', 'meetingTime', 'room',
+                               'description', 'hasImage', 'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['name', 'description', 'hasImage', 'createdAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 100
+        && shortText(d, 'advisor') && shortText(d, 'meetingDay')
+        && shortText(d, 'meetingTime') && shortText(d, 'room')
+        && d.description is string && d.description.size() <= 20000
+        && d.hasImage is bool
+        && d.createdAt is timestamp
+        && (!('updatedAt' in d) || d.updatedAt is timestamp);
+    }
+
+    match /clubs/{clubId} {
+      allow read: if isSchoolUser();
+      allow create: if isEditor() && validClub(request.resource.data);
+      allow update: if isEditor()
+        && validClub(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isEditor();
+    }
+
+    match /clubImages/{clubId} {
+      allow read: if isSchoolUser();
+      allow create, update: if isEditor()
+        && request.resource.data.keys().hasOnly(['data'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() <= 1000000;
+      allow delete: if isEditor();
+    }
+
     // ---------- Editor check ----------
     // The website asks for editorCheck/{your id}. Only editors are allowed to,
     // which is how the page learns you're an editor without a second list.

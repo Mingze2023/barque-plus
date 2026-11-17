@@ -1106,3 +1106,118 @@ body.logged-out .settings-btn { display: none; }
 .theme-swatches span:first-child { margin-left: 0; }
 .theme-option small { display: block; font-weight: 600; font-size: 0.78rem; color: var(--brown-600); }
 .collapse-btn:focus-visible { outline: 3px solid rgba(var(--gold-rgb), 0.7); outline-offset: 1px; }
+
+/* ============================================================
+   Club Information (Step 8): a bulletin board
+   Each club has its own color (--club), picked in js/clubs.js.
+   ============================================================ */
+.clubs-banner {
+  position: relative;
+  padding: 22px 26px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 12% 30%, rgba(255, 255, 255, 0.18) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.14) 0 2px, transparent 3px),
+    var(--brown-800);
+  background-size: 34px 34px, 46px 46px, auto;
+  color: var(--white);
+}
+.clubs-title { margin: 0; font-family: var(--font-display); font-size: 2rem; }
+.clubs-banner p { margin: 4px 0 0; color: var(--brown-300); }
+.clubs-toolbar { margin-bottom: 18px; }
+.clubs-search { max-width: 420px; }
+
+.clubs-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+  padding: 22px;
+  border-radius: 18px;
+  background:
+    radial-gradient(rgba(var(--shadow-rgb), 0.08) 1px, transparent 1.5px) 0 0 / 14px 14px,
+    var(--yellow-100);
+  box-shadow: inset 0 2px 10px rgba(var(--shadow-rgb), 0.08);
+}
+.clubs-empty { grid-column: 1 / -1; margin: 0; }
+
+.club-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border-top: 6px solid var(--club);
+  border-radius: 6px 6px 12px 12px;
+  box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.14);
+  transform: rotate(-0.6deg);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s;
+}
+.club-card:nth-child(even) { transform: rotate(0.7deg); }
+.club-card:nth-child(3n) { transform: rotate(-0.2deg); }
+.club-card:hover { transform: translateY(-4px) rotate(0deg); box-shadow: 0 10px 22px rgba(var(--shadow-rgb), 0.2); }
+.club-pin {
+  position: absolute; top: -12px; left: 50%; width: 16px; height: 16px; margin-left: -8px; z-index: 1;
+  border-radius: 50%; background: var(--club);
+  box-shadow: inset -2px -3px 0 rgba(0, 0, 0, 0.25), 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+.club-card-main { display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 18px; color: inherit; text-decoration: none; }
+.club-thumb { height: 140px; border-radius: 8px; overflow: hidden; background: var(--paper); }
+.club-thumb-img, .club-thumb .club-picture-slot { width: 100%; height: 100%; object-fit: cover; display: block; }
+.club-initials {
+  display: grid; place-items: center; width: 100%; height: 100%;
+  background: var(--club); color: #fff;
+  font-family: var(--font-display); font-weight: 900; font-size: 2.6rem; letter-spacing: 0.04em;
+}
+.club-name { margin: 6px 0 0; font-family: var(--font-display); font-size: 1.25rem; line-height: 1.25; overflow-wrap: anywhere; }
+.club-preview {
+  margin: 0; color: var(--brown-800); line-height: 1.45; font-size: 0.95rem;
+  display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.club-delete { position: absolute; top: 6px; right: 6px; background: var(--white); box-shadow: 0 1px 4px rgba(var(--shadow-rgb), 0.2); }
+
+/* One club's page */
+.club-page { max-width: 760px; }
+.club-page-picture { height: 280px; border-radius: 16px; overflow: hidden; border-bottom: 6px solid var(--club); background: var(--paper); }
+.club-page-img, .club-page-picture .club-picture-slot { width: 100%; height: 100%; object-fit: cover; display: block; }
+.club-page-picture .club-initials { display: grid; font-size: 5rem; }
+.club-page-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
+.club-page-name { margin: 0; font-family: var(--font-display); font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.15; overflow-wrap: anywhere; }
+.club-updated { margin-top: 4px; color: var(--brown-600); font-size: 0.88rem; font-weight: 600; }
+.club-page-body { margin-top: 18px; padding-top: 16px; border-top: 3px solid var(--club); }
+.club-page-body p { font-size: 1.06rem; line-height: 1.7; margin: 0 0 14px; overflow-wrap: anywhere; }
+.club-empty-text { color: var(--brown-600); }
+.club-edit-picture { margin-bottom: 12px; }
+
+/* ---------- Club details (advisor, meeting day, time, room) ---------- */
+.clubs-editor-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.btn-secondary {
+  font: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
+  padding: 9px 16px; border-radius: 8px;
+  background: var(--white); color: var(--brown-800);
+  border: 1.5px solid var(--brown-300);
+}
+.btn-secondary:hover { border-color: var(--brown-600); background: rgba(var(--gold-rgb), .12); }
+.club-card-details { margin: 2px 0 6px; font-size: 12.5px; font-weight: 600; color: var(--club); display: flex; flex-direction: column; gap: 1px; }
+.club-card-details span + span { color: var(--brown-600); font-weight: 500; }
+.club-details {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; padding: 0;
+}
+.club-details > div {
+  background: rgba(var(--shadow-rgb), .05); border-left: 3px solid var(--club);
+  border-radius: 6px; padding: 6px 12px; min-width: 110px;
+}
+.club-details dt { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--brown-600); }
+.club-details dd { margin: 2px 0 0; font-weight: 600; }
+.club-detail-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.import-all { display: flex; align-items: center; gap: 8px; margin: 10px 0 6px; cursor: pointer; }
+.import-list {
+  max-height: 46vh; overflow-y: auto; border: 1px solid rgba(var(--shadow-rgb), .15);
+  border-radius: 8px; padding: 4px 0; margin-bottom: 12px;
+}
+.import-item { display: flex; gap: 10px; align-items: flex-start; padding: 6px 12px; cursor: pointer; }
+.import-item:hover { background: rgba(var(--gold-rgb), .1); }
+.import-item input { margin-top: 3px; }
+.import-item span { display: flex; flex-direction: column; }
+.import-item small { color: var(--brown-600); font-size: 12px; }
+.club-detail-fields > label { min-width: 0; }
+.club-detail-fields input { width: 100%; box-sizing: border-box; }
