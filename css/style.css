@@ -1221,3 +1221,91 @@ body.logged-out .settings-btn { display: none; }
 .import-item small { color: var(--brown-600); font-size: 12px; }
 .club-detail-fields > label { min-width: 0; }
 .club-detail-fields input { width: 100%; box-sizing: border-box; }
+
+/* ============================================================
+   Miscellaneous (Step 9): menus and school map
+   ============================================================ */
+.misc-banner {
+  padding: 22px 26px; margin-bottom: 18px; border-radius: 16px; color: var(--white);
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.07) 0 12px, transparent 12px 24px),
+    var(--accent-teal);
+}
+.misc-title { margin: 0; font-family: var(--font-display); font-size: 2rem; }
+.misc-banner p { margin: 4px 0 0; opacity: 0.85; }
+.misc-heading { margin: 0; font-family: var(--font-display); font-size: 1.5rem; }
+
+.menu-switcher { display: flex; align-items: center; gap: 12px; margin: 4px 0 14px; }
+.menu-month { margin: 0; min-width: 210px; text-align: center; font-family: var(--font-display); font-size: 1.6rem; }
+.menu-arrow {
+  width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+  border: 1.5px solid var(--brown-300); background: var(--white); color: var(--brown-800);
+  font-size: 1.5rem; line-height: 1; display: grid; place-items: center; padding: 0 0 3px;
+}
+.menu-arrow:hover:not(:disabled) { border-color: var(--accent-teal); color: var(--accent-teal); }
+.menu-arrow:disabled { opacity: 0.35; cursor: default; }
+.menu-today { margin-left: auto; }
+
+.menu-calendar {
+  background: var(--white); border-radius: 14px; padding: 14px 14px 16px; margin-bottom: 22px;
+  box-shadow: 0 2px 10px rgba(var(--shadow-rgb), 0.08); border-top: 5px solid var(--accent-teal);
+}
+.menu-breakfast { border-top-color: var(--yellow-500); }
+.menu-calendar-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 2px 10px; }
+.menu-calendar-head h3 { margin: 0; font-family: var(--font-display); font-size: 1.35rem; }
+.menu-calendar-head a { font-size: 0.82rem; font-weight: 600; color: var(--accent-teal); text-decoration: none; }
+.menu-calendar-head a:hover { text-decoration: underline; }
+.menu-none { margin: 0 2px 10px; font-style: italic; color: var(--brown-600); }
+
+.menu-grid {
+  display: grid; grid-template-columns: 0.45fr repeat(5, 1fr) 0.45fr; gap: 4px;
+}
+.menu-weekday {
+  text-align: center; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--brown-600); padding: 2px 0 4px;
+}
+.menu-cell {
+  min-width: 0; min-height: 74px; padding: 5px 6px 7px; border-radius: 8px;
+  background: rgba(var(--shadow-rgb), 0.035); font-size: 0.72rem; line-height: 1.3; overflow-wrap: anywhere;
+}
+.menu-cell.empty { background: transparent; }
+.menu-cell.weekend { background: rgba(var(--shadow-rgb), 0.015); }
+.menu-cell.past { opacity: 0.55; }
+.menu-cell.off { background: rgba(var(--red-rgb), 0.06); }
+.menu-cell.today {
+  opacity: 1; background: rgba(var(--gold-rgb), 0.2);
+  box-shadow: inset 0 0 0 2px var(--yellow-500);
+}
+.menu-date { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.8rem; color: var(--brown-800); margin-bottom: 3px; }
+.menu-date em {
+  font-style: normal; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em;
+  background: var(--yellow-500); color: var(--brown-900); padding: 1px 5px; border-radius: 6px;
+}
+.menu-group + .menu-group { margin-top: 3px; }
+.menu-group-title { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent-teal); }
+.menu-breakfast .menu-group-title { color: var(--brown-600); }
+.menu-item { color: var(--brown-900); }
+.menu-note { margin-top: 3px; font-style: italic; color: var(--brown-600); }
+.menu-off { margin-top: 4px; font-weight: 600; font-style: italic; color: var(--accent-red); }
+.menu-missing { line-height: 1.5; }
+
+.school-map { margin-bottom: 30px; }
+.map-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.map-hint { font-size: 0.85rem; color: var(--brown-600); }
+.map-frame {
+  position: relative; display: block; width: 100%; padding: 0; border: none; border-radius: 14px; overflow: hidden;
+  background: var(--white); box-shadow: 0 2px 10px rgba(var(--shadow-rgb), 0.08); cursor: zoom-in; font: inherit;
+}
+.map-frame img { display: block; width: 100%; height: auto; }
+.map-frame.empty { cursor: default; min-height: 260px; border: 2px dashed var(--brown-300); box-shadow: none; background: rgba(var(--shadow-rgb), 0.03); }
+.map-frame.editable { cursor: pointer; }
+.map-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 260px; color: var(--brown-600); font-weight: 600; }
+.map-placeholder svg { width: 54px; height: 54px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; opacity: 0.6; }
+.map-edit-badge {
+  position: absolute; top: 12px; right: 12px; padding: 6px 12px; border-radius: 8px;
+  background: var(--accent-red); color: #fff; font-size: 0.8rem; font-weight: 700; opacity: 0; transition: opacity 0.15s;
+}
+.map-frame.editable:hover .map-edit-badge, .map-frame.editable:focus-visible .map-edit-badge { opacity: 1; }
+.map-frame.editable:hover { box-shadow: 0 0 0 3px var(--accent-red); }
+.map-large { display: block; width: 100%; height: auto; border-radius: 8px; }
+.modal:has(.map-large) { max-width: min(1100px, 92vw); }

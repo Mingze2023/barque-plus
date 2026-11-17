@@ -22,6 +22,8 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `js/clubs.js` | Club Information: bulletin board, club pages, editor tools |
 | `js/club-list.js` | The school's club list (advisor, day, time, room), built in |
 | `scripts/scrape_clubs.py` | Re-reads the school's club table every day into `data/clubs.json` |
+| `js/misc.js` | Miscellaneous: lunch and breakfast calendars, school map |
+| `scripts/scrape_menus.py` | Collects the Health-e Pro lunch and breakfast menus every day into `data/menus.json` |
 | `js/profile-types.js` | Set Profile Types page (editors only) |
 | `js/theme.js` | Season themes (Settings → Spring, Summer, Fall, Winter); colors are in `css/style.css` |
 | `js/toast.js` | Small message at the bottom of the screen, with Undo |

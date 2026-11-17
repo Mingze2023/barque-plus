@@ -88,6 +88,12 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 32. Open a club and click **Edit Club** to change its advisor, meeting day, time or room, or to add its information, news and picture.
 33. The daily GitHub Action re-reads the school's club table into `data/clubs.json`. Clicking **Add Clubs from School Website** again later offers only clubs that aren't on the board yet (it never changes or re-adds clubs you've edited or deleted).
 
+## Part J: Miscellaneous (Step 9)
+
+34. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add the school map.
+35. **Collect the menus now** instead of waiting for tomorrow morning: GitHub → **Actions** → **Scrape news and publish site** → **Run workflow**. When it finishes, the step "Read the lunch and breakfast menus" should list the months it found, and `data/menus.json` appears in the repository.
+36. **Upload the map** in Editor Mode: Miscellaneous → click the empty map box → choose the picture. Click the map again any time to replace it (Undo is offered for 10 seconds).
+
 **Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 
 ## If something doesn't work

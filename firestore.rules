@@ -290,6 +290,18 @@ service cloud.firestore {
       allow delete: if isEditor();
     }
 
+    // ---------- Miscellaneous: school map (Step 9) ----------
+    // siteImages/map  { data }  the shrunk map picture
+    // Everyone can look; editors upload a new one (or remove it with Undo).
+    match /siteImages/{imageId} {
+      allow read: if isSchoolUser();
+      allow create, update: if isEditor() && imageId == 'map'
+        && request.resource.data.keys().hasOnly(['data'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() <= 1000000;
+      allow delete: if isEditor();
+    }
+
     // ---------- Editor check ----------
     // The website asks for editorCheck/{your id}. Only editors are allowed to,
     // which is how the page learns you're an editor without a second list.
