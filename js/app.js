@@ -3,12 +3,14 @@
 // Accounts live in js/account.js.
 // ============================================================
 import { loadFirebase } from './firebase.js';
-import { setupAccounts, saveAvatar } from './account.js';
+import { setupAccounts, saveAvatar, saveTheme } from './account.js';
 import { newsSection } from './news.js';
 import { eventsSection } from './events.js';
 import { artSection } from './art.js';
 import { profileTypesSection } from './profile-types.js';
 import { showToast } from './toast.js';
+import { THEMES, applyTheme, currentTheme, isTheme } from './theme.js';
+import { openModal } from './modal.js';
 import { closeModal } from './modal.js';
 
 // ---------- Sections ----------
@@ -95,14 +97,14 @@ function setupSidebar(sidebarId, buttonId, storageKey, openLabel, closeLabel) {
 const AVATARS = {
   male: `
     <svg viewBox="0 0 100 100">
-      <circle cx="50" cy="38" r="17" fill="#7a5230"/>
-      <path d="M18 92c2-18 15-28 32-28s30 10 32 28z" fill="#7a5230"/>
+      <circle cx="50" cy="38" r="17" style="fill: var(--brown-600)"/>
+      <path d="M18 92c2-18 15-28 32-28s30 10 32 28z" style="fill: var(--brown-600)"/>
     </svg>`,
   female: `
     <svg viewBox="0 0 100 100">
-      <path d="M28 44c0-17 9-27 22-27s22 10 22 27v16c0 4-3 6-6 6H34c-3 0-6-2-6-6z" fill="#3a2414"/>
-      <circle cx="50" cy="40" r="15" fill="#7a5230"/>
-      <path d="M18 92c2-18 15-28 32-28s30 10 32 28z" fill="#7a5230"/>
+      <path d="M28 44c0-17 9-27 22-27s22 10 22 27v16c0 4-3 6-6 6H34c-3 0-6-2-6-6z" style="fill: var(--brown-900)"/>
+      <circle cx="50" cy="40" r="15" style="fill: var(--brown-600)"/>
+      <path d="M18 92c2-18 15-28 32-28s30 10 32 28z" style="fill: var(--brown-600)"/>
     </svg>`,
 };
 
@@ -127,6 +129,7 @@ let firebase = null;
 
 function showLoggedIn(profile) {
   loggedIn = true;
+  if (isTheme(profile.theme)) applyTheme(profile.theme);   // the account's saved season theme
   ctx = { fb: firebase, profile, editorMode: false };
   document.body.classList.remove('checking', 'logged-out', 'editor-mode');
   document.body.classList.add('logged-in');
@@ -139,6 +142,31 @@ function showLoggedIn(profile) {
   avatarChoice = profile.avatar === 'female' ? 'female' : 'male';
   drawAvatar();
   showSection();
+}
+
+// ---------- Settings (gear at the top right of the account sidebar) ----------
+function openSettings() {
+  const body = openModal({
+    title: 'Settings',
+    html: `
+      <p class="settings-label">Season theme</p>
+      <div class="theme-options">
+        ${THEMES.map(t => `
+          <button class="theme-option" data-theme-choice="${t.id}">
+            <span class="theme-swatches">${t.swatches.map(c => `<span style="background:${c}"></span>`).join('')}</span>
+            <span>${t.label}<small>${t.note}</small></span>
+          </button>`).join('')}
+      </div>`,
+  });
+  const mark = () => body.querySelectorAll('.theme-option').forEach(b => b.classList.toggle('selected', b.dataset.themeChoice === currentTheme()));
+  mark();
+  body.querySelectorAll('.theme-option').forEach(button => button.addEventListener('click', () => {
+    const theme = button.dataset.themeChoice;
+    applyTheme(theme);
+    saveTheme(theme);   // follows you to other computers
+    mark();
+    showToast(`${THEMES.find(t => t.id === theme).label} theme on`, { seconds: 2 });
+  }));
 }
 
 // ---------- Editor Mode switch (editors only, off by default) ----------
@@ -186,6 +214,7 @@ async function start() {
   buildNav();
   showDate();
   setupAvatar();
+  document.getElementById('settingsBtn').addEventListener('click', openSettings);
   setupSidebar('leftSidebar', 'leftToggle', 'leftSidebar', 'Expand menu', 'Collapse menu');
   setupSidebar('rightSidebar', 'rightToggle', 'rightSidebar', 'Expand profile', 'Collapse profile');
   window.addEventListener('hashchange', () => { if (loggedIn) showSection(); });

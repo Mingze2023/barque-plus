@@ -20,6 +20,7 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `js/images.js` | Shrinks pictures so they fit in Firestore (used by Student Art, later Clubs and the map) |
 | `js/embeds.js` | Turns YouTube / Vimeo / Google Drive / SoundCloud / file links into players |
 | `js/profile-types.js` | Set Profile Types page (editors only) |
+| `js/theme.js` | Season themes (Settings → Spring, Summer, Fall, Winter); colors are in `css/style.css` |
 | `js/toast.js` | Small message at the bottom of the screen, with Undo |
 | `js/modal.js` | The popup window any section can use |
 | `js/util.js` | Small shared helpers (safe text, dates, paragraphs) |

@@ -18,7 +18,7 @@ service cloud.firestore {
     // false = skip email verification (while school email blocks the emails)
     // Keep this the same as REQUIRE_EMAIL_VERIFICATION in js/account.js.
     function verificationRequired() {
-      return false;
+      return true;
     }
     // ==========================
 
@@ -102,12 +102,13 @@ service cloud.firestore {
         && request.resource.data.avatar in ['male', 'female']
         && request.resource.data.createdAt == request.time;
 
-      // After that, you can only change your profile icon and your last-visit time.
-      // Changing Profile Types will be added for editors in Step 14.
+      // After that, you can only change your profile icon, your season theme
+      // and your last-visit time. (Editors change Profile Types; see below.)
       allow update: if isSchoolUser()
         && isOwner(userId)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avatar', 'lastSeen'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avatar', 'lastSeen', 'theme'])
         && request.resource.data.avatar in ['male', 'female']
+        && request.resource.data.get('theme', 'fall') in ['spring', 'summer', 'fall', 'winter']
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['lastSeen'])
             || request.resource.data.lastSeen == request.time);
 

@@ -13,7 +13,7 @@
 //         blocks the verification emails)
 // If you change this, also change verificationRequired() in firestore.rules
 // to match, and publish the rules again.
-const REQUIRE_EMAIL_VERIFICATION = false;
+const REQUIRE_EMAIL_VERIFICATION = true;
 // ==========================
 
 const SCHOOL_DOMAIN = '@bsd405.org';
@@ -250,6 +250,16 @@ function rememberVisit() {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') rememberVisit();
     });
+  }
+}
+
+// Saves the season theme ('spring' | 'summer' | 'fall' | 'winter') to the account
+export async function saveTheme(theme) {
+  if (!profileRef) return;
+  try {
+    await fb.firestore.updateDoc(profileRef, { theme });
+  } catch (e) {
+    console.error('Could not save theme:', e);
   }
 }
 

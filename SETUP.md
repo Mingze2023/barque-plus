@@ -81,7 +81,7 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
     - Pictures are shrunk automatically. iPhone HEIC photos must be exported as JPG first.
     - Google Drive videos and audio must be shared as **"Anyone with the link"**, or they won't play for others.
 
-**Testing switch:** email verification is currently turned **off** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). Turn both back to `true` and publish the rules once school email can receive the verification emails.
+**Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 
 ## If something doesn't work
 
