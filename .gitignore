@@ -2,3 +2,6 @@
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Firebase service account keys: never commit these (they go in a GitHub secret)
+*firebase-adminsdk*.json

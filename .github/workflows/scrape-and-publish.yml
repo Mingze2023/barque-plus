@@ -3,7 +3,8 @@
 #
 # Runs:
 #   - every time you push changes  -> publishes the site
-#   - every day at about 6 a.m.     -> scrapes news, menus and the club list, then publishes
+#   - every day at about 6 a.m.     -> scrapes news, menus and the club list,
+#                                      deletes old lost items, then publishes
 #   - when you click "Run workflow" -> scrapes news, then publishes
 #     (GitHub website: Actions tab > Scrape news and publish site)
 #
@@ -63,6 +64,15 @@ jobs:
         if: github.event_name != 'push'
         continue-on-error: true
         run: python scripts/scrape_clubs.py
+
+      - name: Delete lost items older than 14 days
+        if: github.event_name != 'push'
+        continue-on-error: true
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then pip install firebase-admin; fi
+          python scripts/cleanup_lost_items.py
 
       - name: Save the news to the repository
         if: github.event_name != 'push'

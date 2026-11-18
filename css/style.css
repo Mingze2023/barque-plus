@@ -1383,3 +1383,70 @@ body.logged-out .settings-btn { display: none; }
 .qa-reply-form .comment-counter { grid-column: 1; font-size: 0.78rem; }
 .qa-reply-error { grid-column: 1 / -1; margin: 0; }
 .qa-reply-error:empty { display: none; }
+
+/* ============================================================
+   Lost Items tab (Step 11), at the top of every page
+   ============================================================ */
+.top-strip { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 0; position: relative; z-index: 30; }
+.lost { position: relative; }
+.lost-tab {
+  display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 14px 0 11px;
+  border: none; border-radius: 0 0 10px 10px; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em;
+  box-shadow: 0 3px 10px rgba(var(--shadow-rgb), 0.15);
+  animation: lost-colors 12s ease-in-out infinite;
+}
+.lost-tab svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.lost-count:not(:empty) {
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; display: grid; place-items: center;
+  background: rgba(255, 255, 255, 0.7); color: var(--brown-900); font-size: 0.7rem;
+}
+@keyframes lost-colors {
+  0%, 100% { background: var(--yellow-500); color: var(--brown-900); }
+  33%      { background: var(--accent-teal); color: #fff; }
+  66%      { background: var(--accent-red);  color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { .lost-tab { animation: none; background: var(--yellow-500); color: var(--brown-900); } }
+
+.lost-menu {
+  position: absolute; top: 100%; left: 50%; width: 420px; max-width: 80vw;
+  transform: translate(-50%, -8px); opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s, visibility 0s linear 0.18s;
+  transition-delay: 0.25s, 0.25s, 0.43s;   /* a short pause before closing */
+  padding-top: 8px;
+}
+.lost:hover .lost-menu, .lost:focus-within .lost-menu, .lost.pinned .lost-menu {
+  opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+.lost-menu-head, .lost-list { background: var(--white); }
+.lost-menu-head {
+  display: flex; align-items: center; gap: 10px; padding: 12px 12px 10px 16px;
+  border-radius: 14px 14px 0 0; border-top: 4px solid var(--yellow-500);
+  box-shadow: 0 10px 30px rgba(var(--shadow-rgb), 0.18);
+}
+.lost-menu-head strong { font-family: var(--font-display); font-size: 1.15rem; color: var(--brown-900); }
+.lost-menu-note { font-size: 0.75rem; color: var(--brown-600); margin-right: auto; }
+.lost-add {
+  width: 32px; height: 32px; border: none; border-radius: 50%; cursor: pointer; display: grid; place-items: center;
+  background: var(--accent-red); box-shadow: 0 2px 6px rgba(var(--red-rgb), 0.35);
+}
+.lost-add svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
+.lost-add:hover { transform: scale(1.08); }
+.lost-list {
+  list-style: none; margin: 0; padding: 4px 0 10px; max-height: 380px; overflow-y: auto;
+  border-radius: 0 0 14px 14px; box-shadow: 0 16px 30px rgba(var(--shadow-rgb), 0.18);
+}
+.lost-item { display: flex; align-items: flex-start; gap: 8px; padding: 9px 12px 9px 16px; border-top: 1px solid rgba(var(--shadow-rgb), 0.07); }
+.lost-item:first-child { border-top: none; }
+.lost-item.mine { background: rgba(var(--gold-rgb), 0.08); }
+.lost-item-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 0.92rem; line-height: 1.4; color: var(--brown-900); overflow-wrap: anywhere; }
+.lost-by { font-size: 0.75rem; font-weight: 600; color: var(--brown-600); }
+.lost-tools { display: flex; gap: 2px; flex-shrink: 0; }
+.lost-tool { width: 28px; height: 28px; border: none; border-radius: 8px; background: transparent; cursor: pointer; display: grid; place-items: center; }
+.lost-tool svg { width: 16px; height: 16px; fill: none; stroke: var(--brown-600); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lost-tool.trash svg { stroke: var(--accent-red); }
+.lost-tool:hover { background: rgba(var(--shadow-rgb), 0.08); }
+.lost-confirm { font-size: 0.8rem; font-weight: 600; color: var(--accent-red); white-space: nowrap; }
+.lost-confirm .link-btn { font-size: 0.8rem; padding: 2px 4px; }
+.lost-empty { padding: 14px 16px; color: var(--brown-600); font-style: italic; font-size: 0.9rem; }

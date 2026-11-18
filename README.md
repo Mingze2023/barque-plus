@@ -25,6 +25,8 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `js/misc.js` | Miscellaneous: lunch and breakfast calendars, school map |
 | `scripts/scrape_menus.py` | Collects the Health-e Pro lunch and breakfast menus every day into `data/menus.json` |
 | `js/qa.js` | Q&A: questions, replies, votes, daily limit, editor tools |
+| `js/lost.js` | Lost Items tab at the top of every page |
+| `scripts/cleanup_lost_items.py` | Deletes lost items older than 14 days (daily, needs the `FIREBASE_SERVICE_ACCOUNT` secret) |
 | `js/profile-types.js` | Set Profile Types page (editors only) |
 | `js/theme.js` | Season themes (Settings → Spring, Summer, Fall, Winter); colors are in `css/style.css` |
 | `js/toast.js` | Small message at the bottom of the screen, with Undo |

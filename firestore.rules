@@ -119,6 +119,11 @@ service cloud.firestore {
       return isEditor() || usesTodaysPost('qa');
     }
 
+    // Lost items: 1 new entry per day for everyone except Editors
+    function withinLostLimit() {
+      return isEditor() || usesTodaysPost('lost');
+    }
+
     // ---------- Helpers for Q&A votes ----------
     function myQAVotePath(questionId) {
       return /databases/$(database)/documents/users/$(request.auth.uid)/qaVotes/$(questionId);
@@ -209,7 +214,7 @@ service cloud.firestore {
         allow read: if isSchoolUser() && isOwner(userId);
         allow create, update: if isSchoolUser()
           && isOwner(userId)
-          && kind in ['qa']
+          && kind in ['qa', 'lost']
           && request.resource.data.keys().hasOnly(['day'])
           && request.resource.data.day == today()
           && (resource == null || resource.data.day < today());
@@ -427,6 +432,38 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['questionId', 'text', 'uid', 'username', 'createdAt'])
         && request.resource.data.text is string
         && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt is timestamp;
+    }
+
+    // ---------- Lost Items (Step 11) ----------
+    // lostItems/{id}  { text, uid, username, createdAt, updatedAt? }
+    // Anyone adds (200 characters, 1 per day for students), edits or deletes
+    // their own. Editors can delete any (and put it back with Undo).
+    // The daily GitHub Action deletes entries older than 14 days.
+    match /lostItems/{itemId} {
+      allow read: if isSchoolUser();
+      allow create: if isSchoolUser()
+        && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.username == myUsername()
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 200
+        && request.resource.data.createdAt == request.time
+        && withinLostLimit();
+      allow update: if isSchoolUser()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'updatedAt'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 200
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isSchoolUser() && (resource.data.uid == request.auth.uid || isEditor());
+      // Undo: an editor puts a deleted entry back as it was
+      allow create: if isEditor()
+        && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt', 'updatedAt'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 200
         && request.resource.data.createdAt is timestamp;
     }
 

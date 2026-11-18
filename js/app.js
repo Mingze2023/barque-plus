@@ -10,6 +10,7 @@ import { artSection } from './art.js';
 import { clubsSection } from './clubs.js';
 import { miscSection } from './misc.js';
 import { qaSection } from './qa.js';
+import { startLostItems } from './lost.js';
 import { profileTypesSection } from './profile-types.js';
 import { showToast } from './toast.js';
 import { THEMES, applyTheme, currentTheme, isTheme } from './theme.js';
@@ -60,6 +61,7 @@ function buildNav() {
 
 // ---------- Show the section named in the address bar ----------
 // The address looks like #news, or #news/<article-id> for one article.
+let lostItems = null;      // the Lost Items tab at the top of every page
 let ctx = null;            // { fb, profile, editorMode } while logged in
 let leaveSection = null;   // cleanup for the section currently shown
 
@@ -147,6 +149,8 @@ function showLoggedIn(profile) {
   drawEditorSwitch();
   avatarChoice = profile.avatar === 'female' ? 'female' : 'male';
   drawAvatar();
+  if (lostItems) lostItems.stop();
+  lostItems = startLostItems(document.getElementById('topStrip'), () => ctx);
   showSection();
 }
 
@@ -190,6 +194,7 @@ function drawEditorSwitch() {
     document.body.classList.toggle('editor-mode', ctx.editorMode);
     showToast(ctx.editorMode ? 'Editor Mode on' : 'Editor Mode off', { seconds: 2 });
     showSection();   // redraw the page with (or without) editing tools
+    if (lostItems) lostItems.refresh();
   });
 }
 
@@ -199,6 +204,7 @@ function showLoggedOut() {
   if (leaveSection) { leaveSection(); leaveSection = null; }
   SECTIONS.forEach(s => s.reset && s.reset());
   closeModal();
+  if (lostItems) { lostItems.stop(); lostItems = null; }
   ctx = null;
   buildNav();
   drawEditorSwitch();

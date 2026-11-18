@@ -99,6 +99,19 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 37. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add Q&A and the daily limit. If Publish shows an error, copy the message (it names a line number).
 38. That's it: Q&A appears in the menu. Students can ask 1 question **or** post 1 reply per day in total (it resets at midnight, Bellevue time). Editors have no limit, and in Editor Mode every question and reply has a trash bin with Undo.
 
+## Part L: Lost Items (Step 11)
+
+39. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
+40. **Let the daily GitHub Action delete old lost items.** The website already hides entries older than 14 days; this step deletes them from Firestore for good. It needs a key that lets GitHub sign in to your Firebase project, kept as a GitHub *secret* (stored encrypted; nobody can see it, not even on the public repository).
+    1. Firebase console → gear icon ⚙ next to **Project Overview** → **Project settings** → **Service accounts** tab.
+    2. Click **Generate new private key** → **Generate key**. A `.json` file downloads.
+    3. Open that file in VS Code (or Notepad / TextEdit) and copy **everything** in it, from the first `{` to the last `}`.
+    4. On GitHub, open the barque-plus repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
+    5. Name: `FIREBASE_SERVICE_ACCOUNT`. Secret: paste. Click **Add secret**.
+    6. **Delete the downloaded `.json` file** (and empty the Trash / Recycle Bin). Never put it in the project folder or commit it: anyone with it can change everything in your database.
+    7. Test it: **Actions** → **Scrape news and publish site** → **Run workflow**. The step "Delete lost items older than 14 days" should say `Deleted 0 lost item(s)…` (or more).
+    If the key is ever shared by mistake: Service accounts → **Manage service account permissions** → find the key and delete it, then make a new one.
+
 **Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 
 ## If something doesn't work
