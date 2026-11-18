@@ -86,6 +86,62 @@ service cloud.firestore {
         && getAfter(statsPath(articleId)).data.get('down', 0) - oldDown == downChange(b, a);
     }
 
+    // ---------- Today's date in Bellevue (for daily limits) ----------
+    // A day number (days since Jan 1 1970) that changes at midnight Pacific
+    // time, including daylight saving time (2nd Sunday of March to the
+    // 1st Sunday of November). js/qa.js works out the same number.
+    function firstSunday(year, month) {
+      // dayOfWeek(): Monday = 1 ... Sunday = 7
+      return 1 + (7 - timestamp.date(year, month, 1).dayOfWeek()) % 7;
+    }
+    function pacificOffsetHours() {
+      let y = request.time.year();
+      let dstStart = timestamp.date(y, 3, firstSunday(y, 3) + 7) + duration.value(10, 'h');  // 2 a.m. PST
+      let dstEnd = timestamp.date(y, 11, firstSunday(y, 11)) + duration.value(9, 'h');       // 2 a.m. PDT
+      return (request.time >= dstStart && request.time < dstEnd) ? 7 : 8;
+    }
+    function today() {
+      return math.floor((request.time - duration.value(pacificOffsetHours(), 'h')).toMillis() / 86400000);
+    }
+
+    // ---------- Daily limits: users/{you}/limits/{kind} = { day } ----------
+    // A post only counts if it moves your "day" forward to today in the same save.
+    function limitPath(kind) {
+      return /databases/$(database)/documents/users/$(request.auth.uid)/limits/$(kind);
+    }
+    function usesTodaysPost(kind) {
+      return existsAfter(limitPath(kind))
+        && getAfter(limitPath(kind)).data.day == today()
+        && (!exists(limitPath(kind)) || get(limitPath(kind)).data.day < today());
+    }
+    // Who has a Q&A limit: everyone except Editors (Teachers join them in Step 15)
+    function withinQALimit() {
+      return isEditor() || usesTodaysPost('qa');
+    }
+
+    // ---------- Helpers for Q&A votes ----------
+    function myQAVotePath(questionId) {
+      return /databases/$(database)/documents/users/$(request.auth.uid)/qaVotes/$(questionId);
+    }
+    function questionPath(questionId) {
+      return /databases/$(database)/documents/qa/$(questionId);
+    }
+    function qaVoteBefore(questionId) {
+      return exists(myQAVotePath(questionId)) ? get(myQAVotePath(questionId)).data.value : 0;
+    }
+    function qaVoteAfter(questionId) {
+      return existsAfter(myQAVotePath(questionId)) ? getAfter(myQAVotePath(questionId)).data.value : 0;
+    }
+    function qaCountsMatchVote(questionId) {
+      let b = qaVoteBefore(questionId);
+      let a = qaVoteAfter(questionId);
+      return a != b
+        && exists(questionPath(questionId))
+        && existsAfter(questionPath(questionId))
+        && getAfter(questionPath(questionId)).data.up - get(questionPath(questionId)).data.up == upChange(b, a)
+        && getAfter(questionPath(questionId)).data.down - get(questionPath(questionId)).data.down == downChange(b, a);
+    }
+
     // ---------- User profiles: users/{userId} ----------
     match /users/{userId} {
       // Any Barque+ user can see profiles (needed later for usernames and roles)
@@ -132,6 +188,32 @@ service cloud.firestore {
         allow delete: if isSchoolUser()
           && isOwner(userId)
           && countsMatchVote(articleId);
+      }
+
+      // ----- Your Q&A votes: users/{userId}/qaVotes/{questionId} = { value: 1 or -1 } -----
+      match /qaVotes/{questionId} {
+        allow read: if isSchoolUser() && isOwner(userId);
+        allow create, update: if isSchoolUser()
+          && isOwner(userId)
+          && request.resource.data.keys().hasOnly(['value'])
+          && request.resource.data.value in [1, -1]
+          && qaCountsMatchVote(questionId);
+        allow delete: if isSchoolUser()
+          && isOwner(userId)
+          && qaCountsMatchVote(questionId);
+      }
+
+      // ----- Your daily limits: users/{userId}/limits/{kind} = { day } -----
+      // "day" can only move forward, to today, and can never be deleted.
+      match /limits/{kind} {
+        allow read: if isSchoolUser() && isOwner(userId);
+        allow create, update: if isSchoolUser()
+          && isOwner(userId)
+          && kind in ['qa']
+          && request.resource.data.keys().hasOnly(['day'])
+          && request.resource.data.day == today()
+          && (resource == null || resource.data.day < today());
+        allow delete: if false;
       }
     }
 
@@ -288,6 +370,64 @@ service cloud.firestore {
         && request.resource.data.data is string
         && request.resource.data.data.size() <= 1000000;
       allow delete: if isEditor();
+    }
+
+    // ---------- Q&A (Step 10) ----------
+    // qa/{questionId}      { text, uid, username, createdAt, up, down }
+    // qaReplies/{replyId}  { questionId, text, uid, username, createdAt }
+    // 500 characters at most. 1 question or reply per day for students
+    // (withinQALimit above). Editors can delete anything, and Undo puts it back.
+    match /qa/{questionId} {
+      allow read: if isSchoolUser();
+      allow create: if isSchoolUser()
+        && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt', 'up', 'down'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.username == myUsername()
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.up == 0
+        && request.resource.data.down == 0
+        && withinQALimit();
+      // Votes: only up/down change, and only to match your own vote
+      allow update: if isSchoolUser()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['up', 'down'])
+        && qaVoteAfter(questionId) != qaVoteBefore(questionId)
+        && request.resource.data.up - resource.data.up == upChange(qaVoteBefore(questionId), qaVoteAfter(questionId))
+        && request.resource.data.down - resource.data.down == downChange(qaVoteBefore(questionId), qaVoteAfter(questionId));
+      allow delete: if isEditor();
+      // Undo: an editor puts a deleted question back as it was
+      allow create: if isEditor()
+        && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt', 'up', 'down'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.up is int
+        && request.resource.data.down is int;
+    }
+
+    match /qaReplies/{replyId} {
+      allow read: if isSchoolUser();
+      allow create: if isSchoolUser()
+        && request.resource.data.keys().hasOnly(['questionId', 'text', 'uid', 'username', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.username == myUsername()
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.questionId is string
+        && exists(/databases/$(database)/documents/qa/$(request.resource.data.questionId))
+        && withinQALimit();
+      allow update: if false;
+      allow delete: if isEditor();
+      // Undo (may happen together with putting its question back)
+      allow create: if isEditor()
+        && request.resource.data.keys().hasOnly(['questionId', 'text', 'uid', 'username', 'createdAt'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt is timestamp;
     }
 
     // ---------- Miscellaneous: school map (Step 9) ----------

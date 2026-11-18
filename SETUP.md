@@ -94,6 +94,11 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 35. **Collect the menus now** instead of waiting for tomorrow morning: GitHub → **Actions** → **Scrape news and publish site** → **Run workflow**. When it finishes, the step "Read the lunch and breakfast menus" should list the months it found, and `data/menus.json` appears in the repository.
 36. **Upload the map** in Editor Mode: Miscellaneous → click the empty map box → choose the picture. Click the map again any time to replace it (Undo is offered for 10 seconds).
 
+## Part K: Q&A (Step 10)
+
+37. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add Q&A and the daily limit. If Publish shows an error, copy the message (it names a line number).
+38. That's it: Q&A appears in the menu. Students can ask 1 question **or** post 1 reply per day in total (it resets at midnight, Bellevue time). Editors have no limit, and in Editor Mode every question and reply has a trash bin with Undo.
+
 **Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 
 ## If something doesn't work

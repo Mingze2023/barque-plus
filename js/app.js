@@ -9,6 +9,7 @@ import { eventsSection } from './events.js';
 import { artSection } from './art.js';
 import { clubsSection } from './clubs.js';
 import { miscSection } from './misc.js';
+import { qaSection } from './qa.js';
 import { profileTypesSection } from './profile-types.js';
 import { showToast } from './toast.js';
 import { THEMES, applyTheme, currentTheme, isTheme } from './theme.js';
@@ -27,6 +28,7 @@ const SECTIONS = [
   artSection,
   clubsSection,
   miscSection,
+  qaSection,
   profileTypesSection,   // editors only
 ];
 
