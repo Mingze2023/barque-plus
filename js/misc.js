@@ -1,13 +1,13 @@
 // ============================================================
 // Miscellaneous section (Step 9)
 //
-// 1. Lunch and breakfast menus: two month calendars, with arrows to switch
+// 1. Lunch and breakfast menus (below the map): two month calendars, with arrows to switch
 //    months and today highlighted. The menus come from data/menus.json,
 //    which the daily GitHub Action collects from Health-e Pro
 //    (scripts/scrape_menus.py).
-// 2. A map of the school, saved in Firestore like Student Art pictures:
+// 2. A map of the school (at the very top), saved in Firestore like Student Art pictures:
 //      siteImages/map  { data }
-//    Blank placeholder until one is uploaded. In Editor Mode, click the map
+//    Shown at the top of the page. Blank placeholder until one is uploaded. In Editor Mode, click the map
 //    (or the placeholder) to upload a different picture.
 // ============================================================
 import { esc } from './util.js';
@@ -72,7 +72,7 @@ function calendarHTML(menu, key, monthKey, today) {
     cells += `
       <div class="${classes}">
         <div class="menu-date"><span>${d}</span>${k === today ? '<em>Today</em>' : ''}</div>
-        ${dayHTML(info)}
+        ${info && !info.off ? `<div class="menu-day-body">${dayHTML(info)}</div>` : dayHTML(info)}
       </div>`;
   }
   const trailing = (7 - ((first.getDay() + count) % 7)) % 7;
@@ -90,6 +90,29 @@ function calendarHTML(menu, key, monthKey, today) {
         ${cells}
       </div>
     </section>`;
+}
+
+// Days with more than 10 lines fade out at the bottom; click one to see it all
+// (click again to shrink it back).
+function markLongDays(box) {
+  box.querySelectorAll('.menu-day-body').forEach((body) => {
+    if (body.scrollHeight <= body.clientHeight + 1) return;
+    const cell = body.closest('.menu-cell');
+    cell.classList.add('long');
+    cell.tabIndex = 0;
+    cell.setAttribute('role', 'button');
+    cell.setAttribute('aria-expanded', 'false');
+    cell.title = 'Click to see the whole menu';
+    const toggle = () => {
+      const open = cell.classList.toggle('expanded');
+      cell.setAttribute('aria-expanded', String(open));
+      cell.title = open ? 'Click to shrink' : 'Click to see the whole menu';
+    };
+    cell.addEventListener('click', toggle);
+    cell.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
 }
 
 function mountMenus(box) {
@@ -126,6 +149,7 @@ function mountMenus(box) {
           ${monthKey !== thisMonth && months.includes(thisMonth) ? '<button class="link-btn menu-today" id="menuToday">Back to this month</button>' : ''}
         </div>
         ${MENU_ORDER.map((k) => calendarHTML(menus[k], k, monthKey, today)).join('')}`;
+      markLongDays(box);
       box.querySelector('#menuPrev').addEventListener('click', () => { index -= 1; draw(); });
       box.querySelector('#menuNext').addEventListener('click', () => { index += 1; draw(); });
       const back = box.querySelector('#menuToday');
@@ -240,8 +264,8 @@ export const miscSection = {
         <h2 class="misc-title">Miscellaneous</h2>
         <p>What's for lunch and breakfast, and how to find your way around.</p>
       </div>
-      <div class="menus" id="menus"></div>
-      <div class="school-map" id="schoolMap"></div>`;
+      <div class="school-map" id="schoolMap"></div>
+      <div class="menus" id="menus"></div>`;
     const stopMenus = mountMenus(el.querySelector('#menus'));
     const stopMap = mountMap(el.querySelector('#schoolMap'), ctx);
     return () => { stopMenus(); stopMap(); };
