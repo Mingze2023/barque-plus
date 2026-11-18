@@ -94,6 +94,8 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 35. **Collect the menus now** instead of waiting for tomorrow morning: GitHub → **Actions** → **Scrape news and publish site** → **Run workflow**. When it finishes, the step "Read the lunch and breakfast menus" should list the months it found, and `data/menus.json` appears in the repository.
 36. **Upload the map** in Editor Mode: Miscellaneous → click the empty map box → choose the picture. Click the map again any time to replace it (Undo is offered for 10 seconds).
 
+**Bell schedules (added to Miscellaneous):** nothing to set up. They're built in, and the daily GitHub Action re-reads the school's bell schedule page into `data/bells.json`, so changes on the school website show up the next day.
+
 ## Part K: Q&A (Step 10)
 
 37. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add Q&A and the daily limit. If Publish shows an error, copy the message (it names a line number).

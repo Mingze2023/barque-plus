@@ -5,6 +5,11 @@
 //    months and today highlighted. The menus come from data/menus.json,
 //    which the daily GitHub Action collects from Health-e Pro
 //    (scripts/scrape_menus.py).
+// 3. Bell schedules (below the menus): Monday/Tuesday/Friday, Wednesday and
+//    Thursday, from data/bells.json (collected daily by
+//    scripts/scrape_bells.py) or the built-in copy in js/bell-list.js.
+//    Today's schedule is marked, and the period happening right now (by
+//    this computer's clock) gets a highlighted outline.
 // 2. A map of the school (at the very top), saved in Firestore like Student Art pictures:
 //      siteImages/map  { data }
 //    Shown at the top of the page. Blank placeholder until one is uploaded. In Editor Mode, click the map
@@ -14,6 +19,7 @@ import { esc } from './util.js';
 import { openModal } from './modal.js';
 import { showToast } from './toast.js';
 import { shrinkImage } from './images.js';
+import { BELL_SCHEDULES, BELL_PAGE, BELL_NOTE } from './bell-list.js';
 
 const ICON_MISC = '<circle cx="12" cy="12" r="9"/><path d="M8 12h.01M12 12h.01M16 12h.01"/>';
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -161,6 +167,81 @@ function mountMenus(box) {
   return () => { alive = false; };
 }
 
+// ---------- Bell schedules ----------
+let bellsPromise = null;
+function loadBells() {
+  if (!bellsPromise) {
+    bellsPromise = fetch(`data/bells.json?v=${Date.now()}`, { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => (d && Array.isArray(d.schedules) && d.schedules.length ? d.schedules : BELL_SCHEDULES))
+      .catch(() => BELL_SCHEDULES);
+  }
+  return bellsPromise;
+}
+
+// "1:15" -> minutes after midnight. The school writes times without a.m./p.m.:
+// 7-11 are morning, 12 is noon, 1-6 are afternoon.
+function minutesOf(time) {
+  const [h, m] = String(time).split(':').map(Number);
+  return (h < 7 ? h + 12 : h) * 60 + m;
+}
+function clockText(time) {
+  const [h, m] = String(time).split(':').map(Number);
+  return `${h}:${String(m).padStart(2, '0')}`;
+}
+
+function mountBells(box) {
+  box.innerHTML = '<div class="placeholder">Loading the bell schedules…</div>';
+  let alive = true;
+  let timer = null;
+
+  loadBells().then((schedules) => {
+    if (!alive) return;
+    function draw() {
+      const now = new Date();
+      const weekday = now.getDay();            // 0 = Sunday ... 6 = Saturday
+      const minute = now.getHours() * 60 + now.getMinutes();
+      const nowParts = [];
+      const cards = schedules.map((sched, si) => {
+        const today = (sched.days || []).includes(weekday);
+        const rows = sched.periods.map(([name, start, end]) => {
+          const current = today && minute >= minutesOf(start) && minute < minutesOf(end);
+          if (current) nowParts.push(`${name} (until ${clockText(end)})`);
+          return `
+            <div class="bell-row${current ? ' now' : ''}">
+              <span class="bell-period">${esc(name)}</span>
+              <span class="bell-time">${esc(clockText(start))} – ${esc(clockText(end))}</span>
+              ${current ? '<span class="bell-now-tag">Now</span>' : ''}
+            </div>`;
+        }).join('');
+        return `
+          <section class="bell-card${today ? ' today' : ''}" data-schedule="${si}">
+            <h3>${esc(sched.name)}${today ? '<em>Today</em>' : ''}</h3>
+            <div class="bell-head"><span>Period</span><span>Time</span></div>
+            ${rows}
+          </section>`;
+      }).join('');
+      box.innerHTML = `
+        <div class="bells-head">
+          <h2 class="misc-heading">Bell Schedules</h2>
+          <a href="${BELL_PAGE}" target="_blank" rel="noopener">School website ↗</a>
+        </div>
+        <p class="bells-now" role="status">${nowParts.length ? `Right now: <strong>${esc(nowParts.join(' · '))}</strong>` : ''}</p>
+        <div class="bell-grid">${cards}</div>
+        <p class="bells-note">${esc(BELL_NOTE)}</p>`;
+    }
+    draw();
+    // Check the clock again every 15 seconds (only redraw when the minute changes)
+    let last = new Date().getMinutes();
+    timer = setInterval(() => {
+      const m = new Date().getMinutes();
+      if (m !== last) { last = m; draw(); }
+    }, 15000);
+  });
+
+  return () => { alive = false; if (timer) clearInterval(timer); };
+}
+
 // ---------- The school map ----------
 let mapCache;   // undefined = not loaded yet, null = no map, string = picture
 
@@ -262,18 +343,21 @@ export const miscSection = {
     el.innerHTML = `
       <div class="misc-banner">
         <h2 class="misc-title">Miscellaneous</h2>
-        <p>What's for lunch and breakfast, and how to find your way around.</p>
+        <p>What's for lunch and breakfast, when the bell rings, and how to find your way around.</p>
       </div>
       <div class="school-map" id="schoolMap"></div>
-      <div class="menus" id="menus"></div>`;
+      <div class="menus" id="menus"></div>
+      <div class="bells" id="bells"></div>`;
     const stopMenus = mountMenus(el.querySelector('#menus'));
     const stopMap = mountMap(el.querySelector('#schoolMap'), ctx);
-    return () => { stopMenus(); stopMap(); };
+    const stopBells = mountBells(el.querySelector('#bells'));
+    return () => { stopMenus(); stopMap(); stopBells(); };
   },
 
   // Forget everything when someone logs out
   reset() {
     menusPromise = null;
+    bellsPromise = null;
     mapCache = undefined;
   },
 };

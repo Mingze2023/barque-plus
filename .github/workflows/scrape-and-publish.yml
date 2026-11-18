@@ -3,7 +3,7 @@
 #
 # Runs:
 #   - every time you push changes  -> publishes the site
-#   - every day at about 6 a.m.     -> scrapes news, menus and the club list,
+#   - every day at about 6 a.m.     -> scrapes news, menus, bell schedules and clubs,
 #                                      deletes old lost items, then publishes
 #   - when you click "Run workflow" -> scrapes news, then publishes
 #     (GitHub website: Actions tab > Scrape news and publish site)
@@ -26,7 +26,7 @@ on:
         default: false
 
 permissions:
-  contents: write   # to save the updated news.json, menus.json and clubs.json
+  contents: write   # to save the updated news, menus, bells and clubs JSON files
   pages: write      # to publish the site
   id-token: write   # required by GitHub Pages
 
@@ -60,6 +60,11 @@ jobs:
         continue-on-error: true
         run: python scripts/scrape_menus.py
 
+      - name: Read the bell schedules
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: python scripts/scrape_bells.py
+
       - name: Read the school's club list
         if: github.event_name != 'push'
         continue-on-error: true
@@ -82,10 +87,11 @@ jobs:
           git add data/news.json
           if [ -f data/clubs.json ]; then git add data/clubs.json; fi
           if [ -f data/menus.json ]; then git add data/menus.json; fi
+          if [ -f data/bells.json ]; then git add data/bells.json; fi
           if git diff --staged --quiet; then
-            echo "No news, menu or club changes."
+            echo "No news, menu, bell schedule or club changes."
           else
-            git commit -m "Update news, menus and clubs ($(date -u +%Y-%m-%d))"
+            git commit -m "Update news, menus, bell schedules and clubs ($(date -u +%Y-%m-%d))"
             git push
           fi
 
