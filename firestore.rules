@@ -208,6 +208,16 @@ service cloud.firestore {
           && qaCountsMatchVote(questionId);
       }
 
+      // ----- Polls you've filled out: users/{userId}/pollsDone/{pollId} = { at } -----
+      match /pollsDone/{pollId} {
+        allow read: if isSchoolUser() && isOwner(userId);
+        allow create: if isSchoolUser()
+          && isOwner(userId)
+          && request.resource.data.keys().hasOnly(['at'])
+          && request.resource.data.at == request.time;
+        allow update, delete: if false;
+      }
+
       // ----- Your daily limits: users/{userId}/limits/{kind} = { day } -----
       // "day" can only move forward, to today, and can never be deleted.
       match /limits/{kind} {
@@ -465,6 +475,25 @@ service cloud.firestore {
         && request.resource.data.text is string
         && request.resource.data.text.size() <= 200
         && request.resource.data.createdAt is timestamp;
+    }
+
+    // ---------- Daily Poll (Step 12) ----------
+    // site/poll  { name, url, pollId, createdAt }  (only one poll at a time)
+    // Everyone can see it; editors add, replace and remove it.
+    match /site/{docId} {
+      allow read: if isSchoolUser();
+      allow create, update: if isEditor() && docId == 'poll'
+        && request.resource.data.keys().hasOnly(['name', 'url', 'pollId', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.url is string
+        && request.resource.data.url.size() <= 1000
+        && request.resource.data.url.matches('https://(forms[.]office[.]com|forms[.]microsoft[.]com|forms[.]cloud[.]microsoft)/.*')
+        && request.resource.data.pollId is string
+        && request.resource.data.pollId.size() <= 40
+        && request.resource.data.createdAt is timestamp;
+      allow delete: if isEditor();
     }
 
     // ---------- Miscellaneous: school map (Step 9) ----------

@@ -35,8 +35,12 @@
 
     <!-- ============ MAIN CONTENT ============ -->
     <main class="main">
-      <!-- Lost Items tab (js/lost.js); shown on every page -->
-      <div class="top-strip" id="topStrip"></div>
+      <!-- Shown on every page: the Lost Items tab (js/lost.js) and, under it,
+           the Daily Poll link and the editors' Add Poll button (js/poll.js) -->
+      <div class="top-strip" id="topStrip">
+        <div id="lostSlot"></div>
+        <div id="pollSlot"></div>
+      </div>
 
       <header class="masthead">
         <div class="masthead-date" id="todayDate"></div>

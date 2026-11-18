@@ -1450,3 +1450,41 @@ body.logged-out .settings-btn { display: none; }
 .lost-confirm { font-size: 0.8rem; font-weight: 600; color: var(--accent-red); white-space: nowrap; }
 .lost-confirm .link-btn { font-size: 0.8rem; padding: 2px 4px; }
 .lost-empty { padding: 14px 16px; color: var(--brown-600); font-style: italic; font-size: 0.9rem; }
+
+/* ============================================================
+   Daily Poll (Step 12), under the Lost Items tab
+   ============================================================ */
+#pollSlot:empty { display: none; }
+.poll-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
+.poll-link {
+  display: inline-flex; align-items: center; gap: 7px; padding: 6px 16px 6px 12px; border-radius: 999px;
+  background: var(--accent-teal); color: #fff; text-decoration: none; font-weight: 700; font-size: 0.88rem;
+  animation: poll-pulse 1.8s ease-in-out infinite;
+}
+.poll-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+.poll-link:hover { animation-play-state: paused; filter: brightness(1.08); }
+@keyframes poll-pulse {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(var(--teal-rgb), 0.55); }
+  50%      { transform: scale(1.05); box-shadow: 0 0 0 9px rgba(var(--teal-rgb), 0); }
+}
+@media (prefers-reduced-motion: reduce) { .poll-link { animation: none; } }
+.poll-ask {
+  display: inline-flex; align-items: center; gap: 8px; padding: 4px 6px 4px 12px; border-radius: 999px;
+  background: var(--white); box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.12);
+  font-size: 0.85rem; font-weight: 600; color: var(--brown-900);
+}
+.poll-yes {
+  border: none; border-radius: 999px; padding: 4px 14px; cursor: pointer;
+  background: var(--yellow-500); color: var(--brown-900); font: inherit; font-weight: 700;
+}
+.poll-yes:hover { filter: brightness(1.05); }
+.poll-ask .link-btn { font-size: 0.8rem; color: var(--brown-600); }
+.poll-editor-tools { display: inline-flex; gap: 6px; }
+.poll-tool {
+  border: 1.5px dashed var(--accent-red); border-radius: 999px; padding: 4px 12px; cursor: pointer;
+  background: rgba(var(--red-rgb), 0.06); color: var(--accent-red); font: inherit; font-size: 0.8rem; font-weight: 700;
+}
+.poll-tool:hover { background: rgba(var(--red-rgb), 0.14); }
+.poll-tool.remove { border-style: solid; background: transparent; }
+.poll-editor-note { margin-top: 4px; text-align: center; font-size: 0.75rem; color: var(--brown-600); }
+.lost { z-index: 2; }   /* the Lost Items menu opens over the poll link */

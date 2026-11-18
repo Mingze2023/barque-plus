@@ -112,6 +112,11 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
     7. Test it: **Actions** → **Scrape news and publish site** → **Run workflow**. The step "Delete lost items older than 14 days" should say `Deleted 0 lost item(s)…` (or more).
     If the key is ever shared by mistake: Service accounts → **Manage service account permissions** → find the key and delete it, then make a new one.
 
+## Part M: Daily Poll (Step 12)
+
+41. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
+42. **Add a poll** in Editor Mode: click **Add Poll** under the Lost Items tab (on any page), paste the Microsoft Forms link (in Forms: **Collect responses** → **Copy link**; make sure it's set so people at your school can respond), and type the name. Adding another poll replaces it; **Remove Poll** takes it down.
+
 **Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 
 ## If something doesn't work
