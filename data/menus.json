@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-17T17:48:38+00:00",
+ "updated": "2026-11-19T22:12:40+00:00",
  "menus": {
   "lunch": {
    "title": "Lunch",
@@ -3955,6 +3955,1352 @@
      "2026-12-31": {
       "off": "Winter Break"
      }
+    },
+    "2027-01": {
+     "2027-01-01": {
+      "off": "Winter Break"
+     },
+     "2027-01-04": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Chicken Basket: Breaded Chicken Tenders & Thick-cut Fries, Wheat Roll",
+         "Breaded Kickin' Nuggets & Thick-cut Fries, Wheat Roll",
+         "Honey Mustard",
+         "BBQ Dipping Sauce"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Baby Carrots",
+         "Garbanzo Beans",
+         "Green Peas"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fresh Apple, Whole",
+         "Sliced Pears"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ],
+      "notes": [
+       "With"
+      ]
+     },
+     "2027-01-05": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Italian Meatballs w/ Penne Pasta & Garlic Bread"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Cherry Tomatoes",
+         "Baby Carrots",
+         "Green Peas"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Orange Wedges",
+         "Apple Slices"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-06": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Classic Breaded Chicken Burger with Baked Fries"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Cucumber Slices",
+         "Garbanzo Beans",
+         "Cherry Tomatoes"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Sliced Yellow Peaches",
+         "Fresh Pears"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-07": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Muckleshoot Salmon Bowl with Rice, Edamame, & Bellevue Sauce"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Broccoli florets",
+         "Baby Carrots",
+         "Cucumber Slices"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Kiwi Fruit",
+         "Tangerine/Mandarin Oranges"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-08": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Protein Packed Two Bean Chili with Corn Tortilla Chips",
+         "Chili Fixin's [Green Onions, Cheddar Cheese, Sour Cream]"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Crunchy Veggies",
+         "Assorted Vegetables",
+         "Red/Orange Vegetables"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ],
+      "notes": [
+       "With"
+      ]
+     },
+     "2027-01-11": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Chicken & Waffles w/ Maple-flavored Syrup & Warm Apple Compote"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Cucumber Slices",
+         "Broccoli florets",
+         "Baby Carrots"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Kiwi Fruit",
+         "Tangerine/Mandarin Oranges"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-12": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Shoyu Chicken Ramen"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Baby Carrots",
+         "Green Peas",
+         "Cherry Tomatoes"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Orange Wedges",
+         "Apple Slices"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-13": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Cheesy Garlic French Bread with Marinara Dipping Sauce"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Cucumber Slices",
+         "Cherry Tomatoes",
+         "Edamame"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fresh Pears",
+         "Sliced Yellow Peaches"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-14": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Homemade Savory Butter Chicken with Rice",
+         "Homemade Savory Butter Chickpeas with Rice"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Baby Carrots",
+         "Green Peas",
+         "Edamame"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Sliced Pears",
+         "Fresh Apple, Whole"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-15": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Turkey Bacon Cheeseburger w/ Baked Tots",
+         "Bellevue Sauce"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Red/Orange Vegetables",
+         "Crunchy Veggies",
+         "Assorted Vegetables"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ],
+      "notes": [
+       "And"
+      ]
+     },
+     "2027-01-18": {
+      "off": "Dr. Martin Luther King Jr. Day"
+     },
+     "2027-01-19": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Gluten Free Teriyaki Chicken w/ Brown Rice & Steamed Broccoli"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Green Peas",
+         "Baby Carrots",
+         "Cherry Tomatoes"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Tangerine/Mandarin Oranges",
+         "Apple Slices"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-20": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Jalapeno Cheezy Bites with Marinara Sauce & Garlic Knot"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Cucumber Slices",
+         "Garbanzo Beans",
+         "Cherry Tomatoes"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Sliced Yellow Peaches",
+         "Fresh Pears"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-21": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Toasted Cheese Sandwich with Scratch-made Tomato Soup"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Green Peas",
+         "Baby Carrots",
+         "Garbanzo Beans"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fresh Apple, Whole",
+         "Sliced Pears"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-22": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Nacho Spreme: Seasoned Beef, Refried Beans & Jalapeno Cheese Sauce over Crunchy WG Corn Tortilla Chips",
+         "Plant-Power Charged Nacho: Veg. Refried Beans & Jalapeno Cheese Sauce over Crunchy WG Corn Tortilla Chips",
+         "Nacho Toppings"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Crunchy Veggies",
+         "Assorted Vegetables",
+         "Red/Orange Vegetables"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ],
+      "notes": [
+       "With"
+      ]
+     },
+     "2027-01-25": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Fish Basket: Crispy Alaska Pollock Wedge w/ Thick-cut Baked Fries & Whole Wheat Roll",
+         "Tartar Sauce"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Baby Carrots",
+         "Coleslaw",
+         "Cucumber Slices"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Tangerine/Mandarin Oranges",
+         "Kiwi Fruit"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ],
+      "notes": [
+       "With"
+      ]
+     },
+     "2027-01-26": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Mandarin Orange Chicken w/ Brown Rice, Green Beans"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Italian Turkey Combo Sub Sandwich",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Baby Carrots",
+         "Green Peas",
+         "Cherry Tomatoes"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Orange Wedges",
+         "Fresh Apple, Whole"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-27": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Ballpark Chicken Corndog with Baked Fries"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Italian Turkey Combo Sub Sandwich",
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Cucumber Slices",
+         "Cherry Tomatoes",
+         "Garbanzo Beans"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Sliced Yellow Peaches",
+         "Fresh Pears"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-28": {
+      "sections": [
+       {
+        "title": "Featured Entree(s)",
+        "items": [
+         "Grilled Chicken SW with Buffalo Sauce & Baked Fries"
+        ]
+       },
+       {
+        "title": "Grill Line",
+        "items": [
+         "Spicy Chicken Burger & Fries",
+         "Cheeseburger w/ Baked Fries",
+         "Hamburger w/ Baked Fries",
+         "Veggie Burger & Fries",
+         "Scratch-made Bean & Cheese Burrito with Baked Fries"
+        ]
+       },
+       {
+        "title": "Pizza by the Slice",
+        "items": [
+         "Cheese Pizza",
+         "Meat Lover's Pizza",
+         "Seasonal Special: Chicken Bacon Ranch Pizza"
+        ]
+       },
+       {
+        "title": "Deli Sandwiches & Salads",
+        "items": [
+         "Italian Turkey Combo Sub Sandwich",
+         "Home-made Sunbutter & Jelly Sandwich with Honey Roasted Sunflower Seeds",
+         "Chicken Caesar Salad"
+        ]
+       },
+       {
+        "title": "Vegetables",
+        "items": [
+         "Romaine Lettuce",
+         "Green Peas",
+         "Garbanzo Beans",
+         "Baby Carrots"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fresh Fruit Variety",
+         "Assorted Fresh Fruit"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "Fat Free Chocolate Milk",
+         "1% Milk"
+        ]
+       },
+       {
+        "title": "Misc.",
+        "items": [
+         "Homestyle Ranch Dressing",
+         "Ketchup",
+         "Caesar Salad Dressing",
+         "Mayonnaise Packet",
+         "Mustard Packet",
+         "Sriracha Chili Sauce",
+         "Salsa",
+         "Burger & Sandwich Toppings",
+         "Balsamic Dressing"
+        ]
+       }
+      ]
+     },
+     "2027-01-29": {
+      "off": "Professional Development Day"
+     }
     }
    }
   },
@@ -5874,6 +7220,665 @@
      },
      "2026-12-31": {
       "off": "Winter Break"
+     }
+    },
+    "2027-01": {
+     "2027-01-01": {
+      "off": "Winter Break"
+     },
+     "2027-01-04": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Poffitz Pancake Bites"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-05": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Mini Maple Waffles"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-06": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Strawberry Neufchatel Cheese Filled Mini Bagel"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-07": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Maple Chicken Sausage Pancake Wrap"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-08": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "French Toast Sticks"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-11": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Poffitz Pancake Bites"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-12": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Mini Maple Waffles"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-13": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Strawberry Neufchatel Cheese Filled Mini Bagel"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-14": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Maple Chicken Sausage Pancake Wrap"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-15": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "French Toast Sticks"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-18": {
+      "off": "Dr. Martin Luther King Jr. Day"
+     },
+     "2027-01-19": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Mini Maple Waffles"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-20": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Strawberry Neufchatel Cheese Filled Mini Bagel"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-21": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Maple Chicken Sausage Pancake Wrap"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-22": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "French Toast Sticks"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-25": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Poffitz Pancake Bites"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-26": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Mini Maple Waffles"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-27": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Strawberry Neufchatel Cheese Filled Mini Bagel"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-28": {
+      "sections": [
+       {
+        "title": "Featured Entree",
+        "items": [
+         "Maple Chicken Sausage Pancake Wrap"
+        ]
+       },
+       {
+        "title": "Daily Choices",
+        "items": [
+         "Assorted Breakfast Cereals",
+         "Cinnamon Roll",
+         "Banana Bread Slice",
+         "Turkey Sausage, Egg & Cheese Morning Slider on an English Muffin",
+         "Egg & Cheese Morning Slider on an English Muffin",
+         "Oatmeal Chocolate Chip BeneFIT Bar",
+         "Yogurt Parfait w/ Organic Bunny Grahams"
+        ]
+       },
+       {
+        "title": "Fruit",
+        "items": [
+         "Fruit Juices",
+         "Fresh Fruit Variety"
+        ]
+       },
+       {
+        "title": "Milk",
+        "items": [
+         "1% Milk",
+         "Fat Free Chocolate Milk"
+        ]
+       }
+      ]
+     },
+     "2027-01-29": {
+      "off": "Professional Development Day"
      }
     }
    }
