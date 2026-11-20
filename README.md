@@ -22,7 +22,7 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `js/clubs.js` | Club Information: bulletin board, club pages, editor tools |
 | `js/club-list.js` | The school's club list (advisor, day, time, room), built in |
 | `scripts/scrape_clubs.py` | Re-reads the school's club table every day into `data/clubs.json` |
-| `js/misc.js` | Miscellaneous: school map, lunch and breakfast calendars, bell schedules |
+| `js/misc.js` | Schedules/Map: school map, lunch and breakfast calendars, bell schedules |
 | `js/bell-list.js` | The school's bell schedules, built in |
 | `scripts/scrape_bells.py` | Re-reads the school's bell schedule page every day into `data/bells.json` |
 | `scripts/scrape_menus.py` | Collects the Health-e Pro lunch and breakfast menus every day into `data/menus.json` |

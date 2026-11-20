@@ -5,23 +5,25 @@
 //   qa/{questionId}          { text, uid, username, createdAt, up, down }
 //   qaReplies/{replyId}      { questionId, text, uid, username, createdAt }
 //   users/{userId}/qaVotes/{questionId}   { value: 1 or -1 }   one vote per account
-//   users/{userId}/limits/qa              { day }   the last day you posted
+//   users/{userId}/limits/qa              { day, count }   posts made on "day"
 //
-// Daily limit: students can ask 1 question OR post 1 reply per day in total.
-// Every post is saved together with users/{you}/limits/qa, and the security
-// rules only accept the post if that "day" moves forward to today
-// (Bellevue time, resetting at midnight). Editors have no limit.
+// Daily limit: students can post 5 questions and replies per day in total
+// (DAILY_POSTS). Every post is saved together with users/{you}/limits/qa,
+// and the security rules only accept the post if that count goes up by one
+// (or starts again at 1 on a new day, Bellevue time, at midnight) and stays
+// within the limit. Editors have no limit.
 // (Teachers get unlimited posts in Step 15.)
 //
 // Editor Mode: a trash bin on every question and reply, with Undo.
 // ============================================================
-import { esc, formatDate } from './util.js';
+import { esc, formatDate, enterSends } from './util.js';
 import { showToast } from './toast.js';
 import { openModal, closeModal } from './modal.js';
 
 const LIMIT = 500;
 const UNDO_SECONDS = 10;
-const LIMIT_MESSAGE = "You've already asked a question or posted a reply today. You can post again tomorrow.";
+const DAILY_POSTS = 5;   // keep the same as dailyMax('qa') in firestore.rules
+const LIMIT_MESSAGE = `You've already posted ${DAILY_POSTS} questions and replies today (the daily limit). You can post again tomorrow.`;
 
 const ICON_QA = '<path d="M4 5h16v11H9l-5 4z"/><path d="M10 9a2 2 0 1 1 2.5 1.9c-.4.1-.5.4-.5.8v.3M12 14h.01"/>';
 const ICON_UP = '<svg viewBox="0 0 24 24"><path d="M12 5l7 9H5z"/></svg>';
@@ -40,6 +42,15 @@ export function pacificDay(now = new Date()) {
   return Date.UTC(get('year'), get('month') - 1, get('day')) / 86400000;
 }
 
+// The daily-limit record to save with your next post, or null if you've
+// used up today's limit. (Older records have no count; they mean 1.)
+export function nextLimit(snap, today, max) {
+  const old = snap && snap.exists() ? snap.data() : null;
+  if (!old || old.day < today) return { day: today, count: 1 };
+  const used = typeof old.count === 'number' ? old.count : 1;
+  return used < max ? { day: today, count: used + 1 } : null;
+}
+
 function hasDailyLimit(ctx) {
   return !ctx.profile.isEditor;
 }
@@ -52,11 +63,12 @@ async function post(ctx, kind, data) {
   const today = pacificDay();
   const limited = hasDailyLimit(ctx);
 
+  let limitRecord = null;
   if (limited) {
-    try {
-      const snap = await firestore.getDoc(limitRef);
-      if (snap.exists() && snap.data().day >= today) return LIMIT_MESSAGE;
-    } catch (e) { /* the rules still check it */ }
+    let snap = null;
+    try { snap = await firestore.getDoc(limitRef); } catch (e) { /* the rules still check it */ }
+    limitRecord = nextLimit(snap, today, DAILY_POSTS);
+    if (!limitRecord) return LIMIT_MESSAGE;
   }
 
   const ref = firestore.doc(firestore.collection(db, kind === 'question' ? 'qa' : 'qaReplies'));
@@ -64,7 +76,7 @@ async function post(ctx, kind, data) {
   const base = { text: data.text, uid: ctx.profile.uid, username: ctx.profile.username, createdAt: firestore.serverTimestamp() };
   if (kind === 'question') batch.set(ref, { ...base, up: 0, down: 0 });
   else batch.set(ref, { ...base, questionId: data.questionId });
-  if (limited) batch.set(limitRef, { day: today });
+  if (limited) batch.set(limitRef, limitRecord);
 
   try {
     await batch.commit();
@@ -72,8 +84,7 @@ async function post(ctx, kind, data) {
   } catch (e) {
     if (limited && e.code === 'permission-denied') {
       try {
-        const snap = await firestore.getDoc(limitRef);
-        if (snap.exists() && snap.data().day >= today) return LIMIT_MESSAGE;
+        if (!nextLimit(await firestore.getDoc(limitRef), today, DAILY_POSTS)) return LIMIT_MESSAGE;
       } catch (_) { /* fall through */ }
     }
     return `It couldn't be posted (${e.code || e.message}).`;
@@ -101,7 +112,7 @@ function checkText(text, what) {
 function openAsk(ctx) {
   const body = openModal({
     title: 'Ask a question',
-    subtitle: hasDailyLimit(ctx) ? 'You can ask 1 question or post 1 reply per day.' : '',
+    subtitle: hasDailyLimit(ctx) ? `You can post ${DAILY_POSTS} questions and replies per day.` : '',
     html: `
       <label class="field modal-field"><span>Your question</span>
         <textarea id="askText" rows="5" maxlength="${LIMIT}" placeholder="What would you like to ask?"></textarea>
@@ -114,6 +125,7 @@ function openAsk(ctx) {
   const error = body.querySelector('#askError');
   const button = body.querySelector('#askPost');
   hookCounter(text, body.querySelector('#askCounter'));
+  enterSends(text, () => { if (!button.disabled) button.click(); });
   text.focus();
   button.addEventListener('click', async () => {
     const value = text.value.trim();
@@ -319,6 +331,7 @@ function mountQA(el, ctx) {
       const error = form.querySelector('.qa-reply-error');
       const button = form.querySelector('button');
       hookCounter(text, counter);
+      enterSends(text, () => { if (!button.disabled) form.requestSubmit(); });
       text.addEventListener('input', () => { drafts[id] = text.value; });
       text.addEventListener('focus', () => { focused = id; });
       text.addEventListener('blur', () => { if (focused === id) focused = null; });

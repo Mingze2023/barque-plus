@@ -1,5 +1,5 @@
 // ============================================================
-// Miscellaneous section (Step 9)
+// Schedules/Map section (Step 9; first called "Miscellaneous")
 //
 // 1. Lunch and breakfast menus (below the map): two month calendars, with arrows to switch
 //    months and today highlighted. The menus come from data/menus.json,
@@ -336,13 +336,13 @@ function mountMap(box, ctx) {
 // ---------- The section ----------
 export const miscSection = {
   id: 'misc',
-  label: 'Miscellaneous',
+  label: 'Schedules/Map',
   icon: ICON_MISC,
 
   mount(el, param, ctx) {
     el.innerHTML = `
       <div class="misc-banner">
-        <h2 class="misc-title">Miscellaneous</h2>
+        <h2 class="misc-title">Schedules/Map</h2>
         <p>What's for lunch and breakfast, when the bell rings, and how to find your way around.</p>
       </div>
       <div class="school-map" id="schoolMap"></div>

@@ -14,10 +14,10 @@
 //   Action deletes them for good (scripts/cleanup_lost_items.py).
 // - Editor Mode: every entry gets a trash bin (with Undo).
 // ============================================================
-import { esc } from './util.js';
+import { esc, enterSends } from './util.js';
 import { showToast } from './toast.js';
 import { openModal, closeModal } from './modal.js';
-import { pacificDay } from './qa.js';
+import { pacificDay, nextLimit } from './qa.js';
 
 const LIMIT = 200;
 const MAX_AGE_DAYS = 14;
@@ -66,6 +66,7 @@ function openEntryEditor(ctx, existing) {
   update();
   text.focus();
 
+  enterSends(text, () => { if (!$('#lostSave').disabled) $('#lostSave').click(); });
   $('#lostSave').addEventListener('click', async () => {
     const value = text.value.trim().replace(/\s+/g, ' ');
     const error = $('#lostError');
@@ -89,13 +90,12 @@ async function addEntry(ctx, text) {
   const limitRef = firestore.doc(db, 'users', ctx.profile.uid, 'limits', 'lost');
   const today = pacificDay();
   const limited = hasDailyLimit(ctx);
-  const usedToday = async () => {
-    try {
-      const snap = await firestore.getDoc(limitRef);
-      return snap.exists() && snap.data().day >= today;
-    } catch (e) { return false; }
+  const DAILY_ENTRIES = 1;   // keep the same as dailyMax('lost') in firestore.rules
+  const readLimit = async () => {
+    try { return nextLimit(await firestore.getDoc(limitRef), today, DAILY_ENTRIES); } catch (e) { return { day: today, count: 1 }; }
   };
-  if (limited && await usedToday()) return LIMIT_MESSAGE;
+  const limitRecord = limited ? await readLimit() : null;
+  if (limited && !limitRecord) return LIMIT_MESSAGE;
 
   const batch = firestore.writeBatch(db);
   batch.set(firestore.doc(firestore.collection(db, 'lostItems')), {
@@ -104,12 +104,12 @@ async function addEntry(ctx, text) {
     username: ctx.profile.username,
     createdAt: firestore.serverTimestamp(),
   });
-  if (limited) batch.set(limitRef, { day: today });
+  if (limited) batch.set(limitRef, limitRecord);
   try {
     await batch.commit();
     return '';
   } catch (e) {
-    if (limited && e.code === 'permission-denied' && await usedToday()) return LIMIT_MESSAGE;
+    if (limited && e.code === 'permission-denied' && !(await readLimit())) return LIMIT_MESSAGE;
     return `It couldn't be added (${e.code || e.message}).`;
   }
 }

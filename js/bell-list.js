@@ -3,7 +3,7 @@
 //
 // Copied from https://bellevuehigh.bsd405.org/our-school/bell-schedule
 // The daily GitHub Action (scripts/scrape_bells.py) re-reads that page and
-// saves data/bells.json; the Miscellaneous page uses that file when it
+// saves data/bells.json; the Schedules/Map page uses that file when it
 // exists, and this built-in copy when it doesn't.
 //
 // Times are written the way the school writes them (no a.m./p.m.):

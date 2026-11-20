@@ -104,15 +104,25 @@ service cloud.firestore {
       return math.floor((request.time - duration.value(pacificOffsetHours(), 'h')).toMillis() / 86400000);
     }
 
-    // ---------- Daily limits: users/{you}/limits/{kind} = { day } ----------
-    // A post only counts if it moves your "day" forward to today in the same save.
+    // ---------- Daily limits: users/{you}/limits/{kind} = { day, count } ----------
     function limitPath(kind) {
       return /databases/$(database)/documents/users/$(request.auth.uid)/limits/$(kind);
     }
+    // How many posts of each kind a student can make per day:
+    function dailyMax(kind) {
+      return kind == 'qa' ? 5 : 1;      // Q&A questions + replies: 5; lost items: 1
+    }
+    // Posts already made today (older records have no count, which means 1)
+    function postsToday(kind) {
+      return (exists(limitPath(kind)) && get(limitPath(kind)).data.day == today())
+        ? get(limitPath(kind)).data.get('count', 1) : 0;
+    }
+    // A post only counts if the same save moves your count up by exactly one
+    // (the limits rule below keeps it within dailyMax).
     function usesTodaysPost(kind) {
       return existsAfter(limitPath(kind))
         && getAfter(limitPath(kind)).data.day == today()
-        && (!exists(limitPath(kind)) || get(limitPath(kind)).data.day < today());
+        && getAfter(limitPath(kind)).data.count == postsToday(kind) + 1;
     }
     // Who has a Q&A limit: everyone except Editors (Teachers join them in Step 15)
     function withinQALimit() {
@@ -218,16 +228,18 @@ service cloud.firestore {
         allow update, delete: if false;
       }
 
-      // ----- Your daily limits: users/{userId}/limits/{kind} = { day } -----
-      // "day" can only move forward, to today, and can never be deleted.
+      // ----- Your daily limits: users/{userId}/limits/{kind} = { day, count } -----
+      // The count only goes up by one (or restarts at 1 on a new day), never
+      // past dailyMax(kind), and the record can never be deleted.
       match /limits/{kind} {
         allow read: if isSchoolUser() && isOwner(userId);
         allow create, update: if isSchoolUser()
           && isOwner(userId)
           && kind in ['qa', 'lost']
-          && request.resource.data.keys().hasOnly(['day'])
+          && request.resource.data.keys().hasOnly(['day', 'count'])
           && request.resource.data.day == today()
-          && (resource == null || resource.data.day < today());
+          && request.resource.data.count == postsToday(kind) + 1
+          && request.resource.data.count <= dailyMax(kind);
         allow delete: if false;
       }
     }
@@ -390,7 +402,7 @@ service cloud.firestore {
     // ---------- Q&A (Step 10) ----------
     // qa/{questionId}      { text, uid, username, createdAt, up, down }
     // qaReplies/{replyId}  { questionId, text, uid, username, createdAt }
-    // 500 characters at most. 1 question or reply per day for students
+    // 500 characters at most. 5 questions + replies per day for students
     // (withinQALimit above). Editors can delete anything, and Undo puts it back.
     match /qa/{questionId} {
       allow read: if isSchoolUser();

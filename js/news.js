@@ -9,7 +9,7 @@
 //   users/{userId}/votes/{articleId}      { value: 1 or -1 }
 // ============================================================
 
-import { esc, formatDate } from './util.js';
+import { esc, formatDate, enterSends } from './util.js';
 import { showToast } from './toast.js';
 
 const COMMENT_LIMIT = 500;
@@ -285,6 +285,8 @@ function mountArticle(el, article, ctx) {
     counter.textContent = `${text.value.length} / ${COMMENT_LIMIT}`;
     counter.classList.toggle('full', text.value.length >= COMMENT_LIMIT);
   });
+
+  enterSends(text, () => { if (!el.querySelector('#commentPost').disabled) el.querySelector('#commentForm').requestSubmit(); });
 
   const commentsRef = firestore.collection(db, 'articles', article.id, 'comments');
   el.querySelector('#commentForm').addEventListener('submit', async (event) => {

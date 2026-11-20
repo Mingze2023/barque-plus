@@ -88,18 +88,18 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 32. Open a club and click **Edit Club** to change its advisor, meeting day, time or room, or to add its information, news and picture.
 33. The daily GitHub Action re-reads the school's club table into `data/clubs.json`. Clicking **Add Clubs from School Website** again later offers only clubs that aren't on the board yet (it never changes or re-adds clubs you've edited or deleted).
 
-## Part J: Miscellaneous (Step 9)
+## Part J: Schedules/Map (Step 9, called Miscellaneous in the spec)
 
 34. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add the school map.
 35. **Collect the menus now** instead of waiting for tomorrow morning: GitHub → **Actions** → **Scrape news and publish site** → **Run workflow**. When it finishes, the step "Read the lunch and breakfast menus" should list the months it found, and `data/menus.json` appears in the repository.
-36. **Upload the map** in Editor Mode: Miscellaneous → click the empty map box → choose the picture. Click the map again any time to replace it (Undo is offered for 10 seconds).
+36. **Upload the map** in Editor Mode: Schedules/Map → click the empty map box → choose the picture. Click the map again any time to replace it (Undo is offered for 10 seconds).
 
-**Bell schedules (added to Miscellaneous):** nothing to set up. They're built in, and the daily GitHub Action re-reads the school's bell schedule page into `data/bells.json`, so changes on the school website show up the next day.
+**Bell schedules (on the Schedules/Map page):** nothing to set up. They're built in, and the daily GitHub Action re-reads the school's bell schedule page into `data/bells.json`, so changes on the school website show up the next day.
 
 ## Part K: Q&A (Step 10)
 
 37. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add Q&A and the daily limit. If Publish shows an error, copy the message (it names a line number).
-38. That's it: Q&A appears in the menu. Students can ask 1 question **or** post 1 reply per day in total (it resets at midnight, Bellevue time). Editors have no limit, and in Editor Mode every question and reply has a trash bin with Undo.
+38. That's it: Q&A appears in the menu. Students can post 5 questions and replies per day in total (it resets at midnight, Bellevue time). Editors have no limit, and in Editor Mode every question and reply has a trash bin with Undo.
 
 ## Part L: Lost Items (Step 11)
 
