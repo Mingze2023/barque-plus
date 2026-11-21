@@ -88,18 +88,18 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 32. Open a club and click **Edit Club** to change its advisor, meeting day, time or room, or to add its information, news and picture.
 33. The daily GitHub Action re-reads the school's club table into `data/clubs.json`. Clicking **Add Clubs from School Website** again later offers only clubs that aren't on the board yet (it never changes or re-adds clubs you've edited or deleted).
 
-## Part J: Miscellaneous (Step 9)
+## Part J: Schedules/Map (Step 9, called Miscellaneous in the spec)
 
 34. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add the school map.
 35. **Collect the menus now** instead of waiting for tomorrow morning: GitHub → **Actions** → **Scrape news and publish site** → **Run workflow**. When it finishes, the step "Read the lunch and breakfast menus" should list the months it found, and `data/menus.json` appears in the repository.
-36. **Upload the map** in Editor Mode: Miscellaneous → click the empty map box → choose the picture. Click the map again any time to replace it (Undo is offered for 10 seconds).
+36. **Upload the map** in Editor Mode: Schedules/Map → click the empty map box → choose the picture. Click the map again any time to replace it (Undo is offered for 10 seconds).
 
-**Bell schedules (added to Miscellaneous):** nothing to set up. They're built in, and the daily GitHub Action re-reads the school's bell schedule page into `data/bells.json`, so changes on the school website show up the next day.
+**Bell schedules (on the Schedules/Map page):** nothing to set up. They're built in, and the daily GitHub Action re-reads the school's bell schedule page into `data/bells.json`, so changes on the school website show up the next day.
 
 ## Part K: Q&A (Step 10)
 
 37. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**). They add Q&A and the daily limit. If Publish shows an error, copy the message (it names a line number).
-38. That's it: Q&A appears in the menu. Students can ask 1 question **or** post 1 reply per day in total (it resets at midnight, Bellevue time). Editors have no limit, and in Editor Mode every question and reply has a trash bin with Undo.
+38. That's it: Q&A appears in the menu. Students can post 5 questions and replies per day in total (it resets at midnight, Bellevue time). Editors have no limit, and in Editor Mode every question and reply has a trash bin with Undo.
 
 ## Part L: Lost Items (Step 11)
 
@@ -118,6 +118,23 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 
 41. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
 42. **Add a poll** in Editor Mode: click **Add Poll** under the Lost Items tab (on any page), paste the Microsoft Forms link (in Forms: **Collect responses** → **Copy link**; make sure it's set so people at your school can respond), and type the name. Adding another poll replaces it; **Remove Poll** takes it down.
+
+## Part N: Language filter, daily limits, Teachers and Club Leaders (Steps 14–16)
+
+43. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
+44. **Language filter:** comments, questions, replies and lost items are checked before they're sent. The word list is `filter/bad-words.txt`: open it in VS Code to add or remove words (one per line), then commit and push. The notes at the top of that file explain `*` (also catch inside longer words) and `!` (always allow a word).
+45. **Daily limits** (reset at midnight, Bellevue time), enforced by the rules:
+
+    | | News comments | Q&A questions + replies | Lost items |
+    |---|---|---|---|
+    | Students, Club Leaders | 5 | 5 | 1 |
+    | Teachers | unlimited | unlimited | 1 |
+    | Editors | unlimited | unlimited | unlimited |
+
+    To change a number, change it in both `js/limits.js` (DAILY) and `firestore.rules` (dailyMax).
+46. **Teachers / Club Leaders:** on **Set Profile Types**, type the email and `teacher` or `club leader`. For a club leader, pick their club from the drop-down. They see the change the next time they log in or reload.
+47. **Club Leaders** get an **Edit Mode** switch. With it on, on their own club's page they can click the text to edit it or click the picture to upload a new one. The rules stop them from changing any other club.
+48. **Everyone can delete their own** comments, questions, replies and lost items (trash bin → "Delete? Yes"), without Editor Mode.
 
 **Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 

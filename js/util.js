@@ -24,3 +24,13 @@ export function paragraphsHTML(text) {
     .map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`)
     .join('');
 }
+
+// Pressing Enter sends the message; Shift+Enter still starts a new line.
+export function enterSends(textarea, send) {
+  textarea.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+      event.preventDefault();
+      send();
+    }
+  });
+}

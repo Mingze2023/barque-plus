@@ -111,6 +111,7 @@ function mountBoard(el, ctx) {
       <h2 class="clubs-title">Club Information</h2>
       <p>Find out what every club is about, and what it's up to.</p>
     </div>
+    ${ctx.clubEditMode && ctx.profile.clubId ? `<p class="leader-hint">Edit Mode: open <a href="#clubs/${encodeURIComponent(ctx.profile.clubId)}">${esc(ctx.profile.clubName || 'your club')}</a> and click its picture or text to change it.</p>` : ''}
     <div class="section-head clubs-toolbar">
       <label class="news-search clubs-search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
@@ -203,27 +204,107 @@ function mountClub(el, clubId, ctx) {
       return;
     }
     const club = fromDoc({ id: snap.id, data: () => snap.data() });
+    // A Club Leader in Edit Mode, on their own club's page
+    const leading = ctx.clubEditMode && ctx.profile.clubId === club.id;
     el.innerHTML = `
       <a class="back-link" href="#clubs">← All clubs</a>
-      <article class="club-page" style="--club:${clubColor(club.name)}">
-        <div class="club-page-picture">${pictureHTML(club, 'club-page-img')}</div>
+      <article class="club-page${leading ? ' leader-editing' : ''}" style="--club:${clubColor(club.name)}">
+        ${leading ? '<p class="leader-hint">Edit Mode: click your club\'s picture or text to change it.</p>' : ''}
+        <div class="club-page-picture${leading ? ' leader-editable' : ''}" ${leading ? 'id="leaderPicture" role="button" tabindex="0" title="Click to upload a picture"' : ''}>
+          ${pictureHTML(club, 'club-page-img')}
+          ${leading ? `<span class="leader-edit-badge">${club.hasImage ? 'Change picture' : 'Upload a picture'}</span>` : ''}
+        </div>
+        ${leading ? '<input type="file" id="leaderFile" accept="image/jpeg,image/png,image/gif,image/webp" hidden><p class="paste-preview" id="leaderNote" role="status"></p>' : ''}
         <div class="club-page-head">
           <h1 class="club-page-name">${esc(club.name)}</h1>
           ${ctx.editorMode ? '<button class="btn-add" id="editClubBtn">Edit Club</button>' : ''}
         </div>
         ${pageDetailsHTML(club)}
         ${club.updatedAt ? `<div class="club-updated">Updated ${esc(formatDate(club.updatedAt))}</div>` : ''}
-        <div class="club-page-body">
-          ${paragraphsHTML(club.description) || '<p class="club-empty-text"><em>This club hasn\'t added any information yet.</em></p>'}
+        <div class="club-page-body${leading ? ' leader-editable' : ''}" ${leading ? 'id="leaderText" role="button" tabindex="0" title="Click to edit your club\'s text"' : ''}>
+          ${paragraphsHTML(club.description) || `<p class="club-empty-text"><em>${leading ? 'Click here to add your club\'s information and news.' : 'This club hasn\'t added any information yet.'}</em></p>`}
+          ${leading ? '<span class="leader-edit-badge">Edit text</span>' : ''}
         </div>
       </article>`;
     observer = loadPictures(el, ctx, 'club-page-img');
     if (ctx.editorMode) el.querySelector('#editClubBtn').addEventListener('click', () => openEditClub(ctx, club));
+    if (leading) hookLeaderTools(el, ctx, club);
   }, (error) => {
     el.innerHTML = `<a class="back-link" href="#clubs">← All clubs</a><p class="form-error">Couldn't load this club (${esc(error.code || error.message)}).</p>`;
   });
 
   return () => { stop(); if (observer) observer.disconnect(); };
+}
+
+// ---------- Club Leader tools (Edit Mode, own club only) ----------
+// The security rules only let a Club Leader change their own club's text and picture.
+function hookLeaderTools(el, ctx, club) {
+  const { db, firestore } = ctx.fb;
+  const clubRef = firestore.doc(db, 'clubs', club.id);
+  const onKey = (fn) => (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } };
+
+  // Text: a large text box in a popup
+  const openText = () => {
+    const body = openModal({
+      title: `Edit ${club.name}`,
+      subtitle: 'Your club\'s information and news. Leave a blank line between paragraphs.',
+      html: `
+        <textarea class="paste-box leader-textbox" id="leaderTextBox" rows="16" maxlength="20000"></textarea>
+        <p class="form-error" id="leaderTextError" role="alert"></p>
+        <button class="btn-primary" id="leaderTextSave">Save</button>`,
+    });
+    const box = body.querySelector('#leaderTextBox');
+    box.value = club.description;
+    box.focus();
+    body.querySelector('#leaderTextSave').addEventListener('click', async () => {
+      const button = body.querySelector('#leaderTextSave');
+      button.disabled = true;
+      try {
+        await firestore.updateDoc(clubRef, { description: box.value.trim(), updatedAt: firestore.serverTimestamp() });
+        closeModal();
+        showToast('Club information saved.');
+      } catch (e) {
+        body.querySelector('#leaderTextError').textContent = `Couldn't save it (${e.code || e.message}).`;
+        button.disabled = false;
+      }
+    });
+  };
+  const text = el.querySelector('#leaderText');
+  text.addEventListener('click', openText);
+  text.addEventListener('keydown', onKey(openText));
+
+  // Picture: pick a file, shrink it, save it (like Student Art)
+  const file = el.querySelector('#leaderFile');
+  const picture = el.querySelector('#leaderPicture');
+  const note = el.querySelector('#leaderNote');
+  picture.addEventListener('click', () => file.click());
+  picture.addEventListener('keydown', onKey(() => file.click()));
+  file.addEventListener('change', async () => {
+    const chosen = file.files[0];
+    if (!chosen) return;
+    note.classList.remove('bad');
+    note.textContent = 'Shrinking the picture…';
+    let data;
+    try {
+      data = await shrinkImage(chosen);
+    } catch (e) {
+      note.textContent = e.message;
+      note.classList.add('bad');
+      return;
+    }
+    note.textContent = 'Saving…';
+    try {
+      const batch = firestore.writeBatch(db);
+      batch.set(firestore.doc(db, 'clubImages', club.id), { data });
+      batch.update(clubRef, { hasImage: true, updatedAt: firestore.serverTimestamp() });
+      await batch.commit();
+      pictureCache.set(club.id, data);
+      showToast('Picture saved.');
+    } catch (e) {
+      note.textContent = `Couldn't save the picture (${e.code || e.message}).`;
+      note.classList.add('bad');
+    }
+  });
 }
 
 // ---------- Editor tools ----------

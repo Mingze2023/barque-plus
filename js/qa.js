@@ -5,23 +5,27 @@
 //   qa/{questionId}          { text, uid, username, createdAt, up, down }
 //   qaReplies/{replyId}      { questionId, text, uid, username, createdAt }
 //   users/{userId}/qaVotes/{questionId}   { value: 1 or -1 }   one vote per account
-//   users/{userId}/limits/qa              { day }   the last day you posted
+//   users/{userId}/limits/qa              { day, count }   (see js/limits.js)
 //
-// Daily limit: students can ask 1 question OR post 1 reply per day in total.
-// Every post is saved together with users/{you}/limits/qa, and the security
-// rules only accept the post if that "day" moves forward to today
-// (Bellevue time, resetting at midnight). Editors have no limit.
-// (Teachers get unlimited posts in Step 15.)
+// Daily limits come from js/limits.js: students and club leaders can post
+// 5 questions and replies per day in total; teachers and editors, unlimited.
+// Every post is checked by the language filter (js/filter.js) first.
 //
+// You can delete your own questions and replies (deleting your question
+// also removes its replies).
 // Editor Mode: a trash bin on every question and reply, with Undo.
 // ============================================================
-import { esc, formatDate } from './util.js';
+import { esc, formatDate, enterSends } from './util.js';
 import { showToast } from './toast.js';
 import { openModal, closeModal } from './modal.js';
+import { prepareLimit, limitMessageAfterRefusal, limitText, pacificDay, nextLimit } from './limits.js';
+import { findBadLanguage, markBadLanguage, BAD_LANGUAGE } from './filter.js';
+
+// (kept for older imports)
+export { pacificDay, nextLimit };
 
 const LIMIT = 500;
 const UNDO_SECONDS = 10;
-const LIMIT_MESSAGE = "You've already asked a question or posted a reply today. You can post again tomorrow.";
 
 const ICON_QA = '<path d="M4 5h16v11H9l-5 4z"/><path d="M10 9a2 2 0 1 1 2.5 1.9c-.4.1-.5.4-.5.8v.3M12 14h.01"/>';
 const ICON_UP = '<svg viewBox="0 0 24 24"><path d="M12 5l7 9H5z"/></svg>';
@@ -30,51 +34,27 @@ const ICON_TRASH = '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13
 
 let listState = { search: '', sort: 'recent' };
 
-// ---------- Today's date in Bellevue, as a day number ----------
-// (days since Jan 1 1970). The security rules work out the same number.
-export function pacificDay(now = new Date()) {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Los_Angeles', year: 'numeric', month: 'numeric', day: 'numeric',
-  }).formatToParts(now);
-  const get = (type) => Number(parts.find((p) => p.type === type).value);
-  return Date.UTC(get('year'), get('month') - 1, get('day')) / 86400000;
-}
-
-function hasDailyLimit(ctx) {
-  return !ctx.profile.isEditor;
-}
-
 // ---------- Posting (a question or a reply) ----------
 // Returns '' when it worked, or a message to show in red.
 async function post(ctx, kind, data) {
   const { db, firestore } = ctx.fb;
-  const limitRef = firestore.doc(db, 'users', ctx.profile.uid, 'limits', 'qa');
-  const today = pacificDay();
-  const limited = hasDailyLimit(ctx);
-
-  if (limited) {
-    try {
-      const snap = await firestore.getDoc(limitRef);
-      if (snap.exists() && snap.data().day >= today) return LIMIT_MESSAGE;
-    } catch (e) { /* the rules still check it */ }
-  }
+  const limit = await prepareLimit(ctx, 'qa');
+  if (limit.message) return limit.message;
 
   const ref = firestore.doc(firestore.collection(db, kind === 'question' ? 'qa' : 'qaReplies'));
   const batch = firestore.writeBatch(db);
   const base = { text: data.text, uid: ctx.profile.uid, username: ctx.profile.username, createdAt: firestore.serverTimestamp() };
   if (kind === 'question') batch.set(ref, { ...base, up: 0, down: 0 });
   else batch.set(ref, { ...base, questionId: data.questionId });
-  if (limited) batch.set(limitRef, { day: today });
+  if (limit.ref) batch.set(limit.ref, limit.record);
 
   try {
     await batch.commit();
     return '';
   } catch (e) {
-    if (limited && e.code === 'permission-denied') {
-      try {
-        const snap = await firestore.getDoc(limitRef);
-        if (snap.exists() && snap.data().day >= today) return LIMIT_MESSAGE;
-      } catch (_) { /* fall through */ }
+    if (e.code === 'permission-denied') {
+      const message = await limitMessageAfterRefusal(ctx, 'qa');
+      if (message) return message;
     }
     return `It couldn't be posted (${e.code || e.message}).`;
   }
@@ -101,7 +81,7 @@ function checkText(text, what) {
 function openAsk(ctx) {
   const body = openModal({
     title: 'Ask a question',
-    subtitle: hasDailyLimit(ctx) ? 'You can ask 1 question or post 1 reply per day.' : '',
+    subtitle: limitText(ctx, 'qa'),
     html: `
       <label class="field modal-field"><span>Your question</span>
         <textarea id="askText" rows="5" maxlength="${LIMIT}" placeholder="What would you like to ask?"></textarea>
@@ -114,12 +94,19 @@ function openAsk(ctx) {
   const error = body.querySelector('#askError');
   const button = body.querySelector('#askPost');
   hookCounter(text, body.querySelector('#askCounter'));
+  enterSends(text, () => { if (!button.disabled) button.click(); });
   text.focus();
   button.addEventListener('click', async () => {
     const value = text.value.trim();
     error.textContent = checkText(value, 'question');
     if (error.textContent) return;
     button.disabled = true;
+    if (await findBadLanguage(value)) {
+      error.textContent = BAD_LANGUAGE;
+      markBadLanguage(text);
+      button.disabled = false;
+      return;
+    }
     button.textContent = 'Posting…';
     const problem = await post(ctx, 'question', { text: value });
     if (!problem) { closeModal(); showToast('Question posted.'); return; }
@@ -164,6 +151,7 @@ async function deleteQuestion(ctx, question, replies) {
     showToast(`Couldn't delete it (${e.code || e.message}).`);
     return;
   }
+  if (!ctx.editorMode) { showToast('Deleted your question.'); return; }
   showToast(`Deleted ${question.username}'s question${replies.length ? ` and ${replies.length === 1 ? 'its reply' : `its ${replies.length} replies`}` : ''}.`, {
     action: 'Undo',
     seconds: UNDO_SECONDS,
@@ -186,6 +174,7 @@ async function deleteReply(ctx, reply) {
     showToast(`Couldn't delete it (${e.code || e.message}).`);
     return;
   }
+  if (!ctx.editorMode) { showToast('Deleted your reply.'); return; }
   showToast(`Deleted ${reply.username}'s reply.`, {
     action: 'Undo',
     seconds: UNDO_SECONDS,
@@ -201,6 +190,7 @@ function fromDoc(doc) {
     raw: d,
     text: d.text || '',
     username: d.username || 'someone',
+    uid: d.uid,
     questionId: d.questionId,
     up: d.up || 0,
     down: d.down || 0,
@@ -217,6 +207,22 @@ function mountQA(el, ctx) {
   const drafts = {};          // reply text typed so far, kept when the list redraws
   const replyErrors = {};
   let focused = null;         // which reply box had the cursor
+  const badLanguage = {};     // reply boxes showing "Inappropriate language"
+  let confirming = null;      // 'q:<id>' or 'r:<id>' waiting for "Delete? Yes"
+  const me = ctx.profile.uid;
+
+  // Trash bin: editors (in Editor Mode) on everything, everyone on their own.
+  // Your own posts ask "Delete? Yes / No" first (only editors get Undo).
+  function trashHTML(kind, item, extraClass = '') {
+    const key = `${kind}:${item.id}`;
+    if (!ctx.editorMode && item.uid !== me) return '';
+    if (confirming === key) {
+      return `<span class="lost-confirm qa-confirm">Delete${kind === 'q' ? ' your question' : ''}?
+        <button class="link-btn" data-confirm-yes="${esc(key)}">Yes</button><button class="link-btn" data-confirm-no>No</button></span>`;
+    }
+    const what = kind === 'q' ? 'question' : 'reply';
+    return `<button class="trash-btn ${extraClass}" data-trash="${esc(key)}" title="Delete this ${what}" aria-label="Delete this ${what}">${ICON_TRASH}</button>`;
+  }
 
   el.innerHTML = `
     <div class="qa-banner">
@@ -280,7 +286,7 @@ function mountQA(el, ctx) {
                 <div class="comment-head"><strong>${esc(q.username)}</strong> · ${esc(formatDate(q.when))}</div>
               </div>
             </div>
-            ${ctx.editorMode ? `<button class="trash-btn qa-trash" data-delete-question="${esc(q.id)}" title="Delete this question" aria-label="Delete this question">${ICON_TRASH}</button>` : ''}
+            ${trashHTML('q', q, 'qa-trash')}
             <div class="vote-box" data-vote="${esc(q.id)}">
               <button class="vote-up${mine === 1 ? ' voted' : ''}" title="Upvote" aria-label="Upvote">${ICON_UP}</button>
               <span class="vote-score" title="${q.up} up, ${q.down} down">${q.up - q.down}</span>
@@ -292,10 +298,10 @@ function mountQA(el, ctx) {
               <li class="comment">
                 <div class="comment-head"><strong>${esc(r.username)}</strong> · ${esc(formatDate(r.when))}</div>
                 <p class="comment-text">${esc(r.text)}</p>
-                ${ctx.editorMode ? `<button class="trash-btn" data-delete-reply="${esc(r.id)}" title="Delete this reply" aria-label="Delete this reply">${ICON_TRASH}</button>` : ''}
+                ${trashHTML('r', r)}
               </li>`).join('')}</ul>` : ''}
             <form class="qa-reply-form" data-reply-form="${esc(q.id)}">
-              <textarea rows="1" maxlength="${LIMIT}" placeholder="Write a reply" aria-label="Write a reply">${esc(drafts[q.id] || '')}</textarea>
+              <textarea rows="1" maxlength="${LIMIT}" placeholder="Write a reply" aria-label="Write a reply"${badLanguage[q.id] ? ' class="bad-language"' : ''}>${esc(drafts[q.id] || '')}</textarea>
               <button type="submit" class="btn-primary qa-reply-post">Reply</button>
               <span class="comment-counter">${(drafts[q.id] || '').length} / ${LIMIT}</span>
               <p class="form-error qa-reply-error" role="alert">${esc(replyErrors[q.id] || '')}</p>
@@ -319,7 +325,8 @@ function mountQA(el, ctx) {
       const error = form.querySelector('.qa-reply-error');
       const button = form.querySelector('button');
       hookCounter(text, counter);
-      text.addEventListener('input', () => { drafts[id] = text.value; });
+      enterSends(text, () => { if (!button.disabled) form.requestSubmit(); });
+      text.addEventListener('input', () => { drafts[id] = text.value; badLanguage[id] = false; text.classList.remove('bad-language'); });
       text.addEventListener('focus', () => { focused = id; });
       text.addEventListener('blur', () => { if (focused === id) focused = null; });
       form.addEventListener('submit', async (event) => {
@@ -328,6 +335,17 @@ function mountQA(el, ctx) {
         error.textContent = replyErrors[id] = checkText(value, 'reply');
         if (error.textContent) return;
         button.disabled = true;
+        if (await findBadLanguage(value)) {
+          error.textContent = replyErrors[id] = BAD_LANGUAGE;
+          badLanguage[id] = true;
+          const live = list.querySelector(`[data-reply-form="${CSS.escape(id)}"]`);
+          if (live) {
+            live.querySelector('.qa-reply-error').textContent = BAD_LANGUAGE;
+            markBadLanguage(live.querySelector('textarea'));
+            live.querySelector('button').disabled = false;
+          }
+          return;
+        }
         const problem = await post(ctx, 'reply', { text: value, questionId: id });
         replyErrors[id] = problem;
         if (!problem) drafts[id] = '';
@@ -345,14 +363,28 @@ function mountQA(el, ctx) {
       if (box) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
     }
 
-    // Editor Mode
-    list.querySelectorAll('[data-delete-question]').forEach((b) => b.addEventListener('click', () => {
-      const q = questions.find((x) => x.id === b.dataset.deleteQuestion);
-      deleteQuestion(ctx, q, repliesFor(q.id));
+    // Deleting
+    const doDelete = (key) => {
+      const [kind, id] = [key.slice(0, 1), key.slice(2)];
+      if (kind === 'q') {
+        const q = questions.find((x) => x.id === id);
+        if (q) deleteQuestion(ctx, q, repliesFor(q.id));
+      } else {
+        const r = replies.find((x) => x.id === id);
+        if (r) deleteReply(ctx, r);
+      }
+    };
+    list.querySelectorAll('[data-trash]').forEach((b) => b.addEventListener('click', () => {
+      const key = b.dataset.trash;
+      const item = key.startsWith('q:') ? questions.find((x) => x.id === key.slice(2)) : replies.find((x) => x.id === key.slice(2));
+      if (ctx.editorMode) doDelete(key);          // editors: delete now, Undo in the toast
+      else if (item && item.uid === me) { confirming = key; draw(); }
     }));
-    list.querySelectorAll('[data-delete-reply]').forEach((b) => b.addEventListener('click', () => {
-      deleteReply(ctx, replies.find((x) => x.id === b.dataset.deleteReply));
+    list.querySelectorAll('[data-confirm-yes]').forEach((b) => b.addEventListener('click', () => {
+      confirming = null;
+      doDelete(b.dataset.confirmYes);
     }));
+    list.querySelectorAll('[data-confirm-no]').forEach((b) => b.addEventListener('click', () => { confirming = null; draw(); }));
   }
 
   const failed = (what) => (e) => {

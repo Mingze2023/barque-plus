@@ -1526,3 +1526,45 @@ body.logged-out .settings-btn { display: none; }
   background: var(--yellow-500); color: var(--brown-900); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
 }
 .bells-note { margin: 10px 2px 0; font-size: 0.78rem; color: var(--brown-600); }
+
+/* ============================================================
+   Inappropriate language (Step 14): the text box glows red
+   ============================================================ */
+textarea.bad-language, input.bad-language {
+  border-color: var(--accent-red) !important;
+  box-shadow: 0 0 0 3px rgba(var(--red-rgb), 0.25), 0 0 16px rgba(var(--red-rgb), 0.45) !important;
+  animation: bad-glow 1.6s ease-in-out infinite;
+}
+@keyframes bad-glow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(var(--red-rgb), 0.25), 0 0 10px rgba(var(--red-rgb), 0.35); }
+  50%      { box-shadow: 0 0 0 3px rgba(var(--red-rgb), 0.35), 0 0 20px rgba(var(--red-rgb), 0.6); }
+}
+@media (prefers-reduced-motion: reduce) { textarea.bad-language, input.bad-language { animation: none; } }
+
+/* Daily limit note under "Comments" */
+.comment-limit-note { margin: -4px 0 10px; font-size: 0.8rem; color: var(--brown-600); }
+
+/* "Delete your comment? Yes / No" */
+.comment .comment-confirm, .qa-confirm { white-space: nowrap; }
+.comment .comment-confirm { position: absolute; top: 10px; right: 12px; }
+.qa-confirm { align-self: center; margin-right: 6px; }
+.qa-reply-list .comment { position: relative; }
+
+/* ============================================================
+   Club Leaders (Step 16): editing their own club
+   ============================================================ */
+.leader-hint {
+  margin: 0 0 14px; padding: 8px 14px; border-radius: 10px; font-size: 0.9rem;
+  background: rgba(var(--red-rgb), 0.08); border-left: 4px solid var(--accent-red); color: var(--brown-900);
+}
+.leader-hint a { color: var(--accent-red); font-weight: 700; }
+.leader-editable { position: relative; cursor: pointer; border-radius: 12px; transition: box-shadow 0.15s; }
+.leader-editable:hover, .leader-editable:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-red); }
+.club-page-body.leader-editable { padding: 10px 12px; margin: 0 -12px; min-height: 60px; }
+.leader-edit-badge {
+  position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 8px;
+  background: var(--accent-red); color: #fff; font-size: 0.75rem; font-weight: 700;
+  opacity: 0; transition: opacity 0.15s; pointer-events: none;
+}
+.leader-editable:hover .leader-edit-badge, .leader-editable:focus-visible .leader-edit-badge { opacity: 1; }
+.leader-textbox { width: 100%; box-sizing: border-box; min-height: 340px; font-size: 1rem; line-height: 1.5; }

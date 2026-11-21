@@ -53,6 +53,20 @@ service cloud.firestore {
       return request.auth.token.email.lower().split('@')[0];
     }
 
+    // ---------- Profile Types (Steps 15 and 16) ----------
+    // Read from your own profile, users/{you} { profileType, clubId }.
+    function myProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function isTeacher() {
+      return myProfile().get('profileType', 'Student') == 'Teacher';
+    }
+    // A Club Leader may only edit the one club they lead
+    function leadsClub(clubId) {
+      return myProfile().get('profileType', 'Student') == 'Club Leader'
+        && myProfile().get('clubId', '') == clubId;
+    }
+
     // ---------- Helpers for votes ----------
     function myVotePath(articleId) {
       return /databases/$(database)/documents/users/$(request.auth.uid)/votes/$(articleId);
@@ -104,22 +118,37 @@ service cloud.firestore {
       return math.floor((request.time - duration.value(pacificOffsetHours(), 'h')).toMillis() / 86400000);
     }
 
-    // ---------- Daily limits: users/{you}/limits/{kind} = { day } ----------
-    // A post only counts if it moves your "day" forward to today in the same save.
+    // ---------- Daily limits: users/{you}/limits/{kind} = { day, count } ----------
     function limitPath(kind) {
       return /databases/$(database)/documents/users/$(request.auth.uid)/limits/$(kind);
     }
+    // How many posts of each kind a Student (or Club Leader) can make per day.
+    // Keep these the same as DAILY in js/limits.js.
+    //   comments: News comments    qa: Q&A questions + replies    lost: lost items
+    function dailyMax(kind) {
+      return kind == 'comments' ? 5 : (kind == 'qa' ? 5 : 1);
+    }
+    // Posts already made today (older records have no count, which means 1)
+    function postsToday(kind) {
+      return (exists(limitPath(kind)) && get(limitPath(kind)).data.day == today())
+        ? get(limitPath(kind)).data.get('count', 1) : 0;
+    }
+    // A post only counts if the same save moves your count up by exactly one
+    // (the limits rule below keeps it within dailyMax).
     function usesTodaysPost(kind) {
       return existsAfter(limitPath(kind))
         && getAfter(limitPath(kind)).data.day == today()
-        && (!exists(limitPath(kind)) || get(limitPath(kind)).data.day < today());
+        && getAfter(limitPath(kind)).data.count == postsToday(kind) + 1;
     }
-    // Who has a Q&A limit: everyone except Editors (Teachers join them in Step 15)
+    // Teachers and Editors have no limit on News comments or Q&A
     function withinQALimit() {
-      return isEditor() || usesTodaysPost('qa');
+      return isEditor() || isTeacher() || usesTodaysPost('qa');
+    }
+    function withinCommentLimit() {
+      return isEditor() || isTeacher() || usesTodaysPost('comments');
     }
 
-    // Lost items: 1 new entry per day for everyone except Editors
+    // Lost items: 1 new entry per day for everyone except Editors (Teachers too)
     function withinLostLimit() {
       return isEditor() || usesTodaysPost('lost');
     }
@@ -175,9 +204,14 @@ service cloud.firestore {
 
       // Editors can change other accounts' Profile Type (Set Profile Types page).
       // "Editor" itself is only given through the editor list above.
+      // A Club Leader also gets clubId (an existing club); others have none.
       allow update: if isEditor()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['profileType'])
-        && request.resource.data.profileType in ['Student', 'Teacher'];
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['profileType', 'clubId'])
+        && request.resource.data.profileType in ['Student', 'Teacher', 'Club Leader']
+        && (request.resource.data.profileType == 'Club Leader'
+              ? (request.resource.data.clubId is string
+                 && exists(/databases/$(database)/documents/clubs/$(request.resource.data.clubId)))
+              : !('clubId' in request.resource.data));
 
       allow delete: if false;
 
@@ -218,16 +252,18 @@ service cloud.firestore {
         allow update, delete: if false;
       }
 
-      // ----- Your daily limits: users/{userId}/limits/{kind} = { day } -----
-      // "day" can only move forward, to today, and can never be deleted.
+      // ----- Your daily limits: users/{userId}/limits/{kind} = { day, count } -----
+      // The count only goes up by one (or restarts at 1 on a new day), never
+      // past dailyMax(kind), and the record can never be deleted.
       match /limits/{kind} {
         allow read: if isSchoolUser() && isOwner(userId);
         allow create, update: if isSchoolUser()
           && isOwner(userId)
-          && kind in ['qa', 'lost']
-          && request.resource.data.keys().hasOnly(['day'])
+          && kind in ['comments', 'qa', 'lost']
+          && request.resource.data.keys().hasOnly(['day', 'count'])
           && request.resource.data.day == today()
-          && (resource == null || resource.data.day < today());
+          && request.resource.data.count == postsToday(kind) + 1
+          && request.resource.data.count <= dailyMax(kind);
         allow delete: if false;
       }
     }
@@ -274,9 +310,11 @@ service cloud.firestore {
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
           && request.resource.data.text.size() <= 500
-          && request.resource.data.createdAt == request.time;
-        // Editors can delete comments, and put one back with Undo.
-        allow delete: if isEditor();
+          && request.resource.data.createdAt == request.time
+          && withinCommentLimit();
+        // You can delete your own comments. Editors can delete any comment,
+        // and put one back with Undo.
+        allow delete: if isSchoolUser() && (isEditor() || resource.data.uid == request.auth.uid);
         allow create: if isEditor()
           && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt'])
           && request.resource.data.text is string
@@ -375,22 +413,28 @@ service cloud.firestore {
       allow update: if isEditor()
         && validClub(request.resource.data)
         && request.resource.data.createdAt == resource.data.createdAt;
+      // Club Leaders (Step 16): only their own club, only its text and picture
+      allow update: if isSchoolUser()
+        && leadsClub(clubId)
+        && validClub(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['description', 'hasImage', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time;
       allow delete: if isEditor();
     }
 
     match /clubImages/{clubId} {
       allow read: if isSchoolUser();
-      allow create, update: if isEditor()
+      allow create, update: if (isEditor() || (isSchoolUser() && leadsClub(clubId)))
         && request.resource.data.keys().hasOnly(['data'])
         && request.resource.data.data is string
         && request.resource.data.data.size() <= 1000000;
-      allow delete: if isEditor();
+      allow delete: if isEditor() || (isSchoolUser() && leadsClub(clubId));
     }
 
     // ---------- Q&A (Step 10) ----------
     // qa/{questionId}      { text, uid, username, createdAt, up, down }
     // qaReplies/{replyId}  { questionId, text, uid, username, createdAt }
-    // 500 characters at most. 1 question or reply per day for students
+    // 500 characters at most. 5 questions + replies per day for students
     // (withinQALimit above). Editors can delete anything, and Undo puts it back.
     match /qa/{questionId} {
       allow read: if isSchoolUser();
@@ -411,7 +455,8 @@ service cloud.firestore {
         && qaVoteAfter(questionId) != qaVoteBefore(questionId)
         && request.resource.data.up - resource.data.up == upChange(qaVoteBefore(questionId), qaVoteAfter(questionId))
         && request.resource.data.down - resource.data.down == downChange(qaVoteBefore(questionId), qaVoteAfter(questionId));
-      allow delete: if isEditor();
+      // You can delete your own question; editors can delete any
+      allow delete: if isSchoolUser() && (isEditor() || resource.data.uid == request.auth.uid);
       // Undo: an editor puts a deleted question back as it was
       allow create: if isEditor()
         && request.resource.data.keys().hasOnly(['text', 'uid', 'username', 'createdAt', 'up', 'down'])
@@ -436,7 +481,12 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/qa/$(request.resource.data.questionId))
         && withinQALimit();
       allow update: if false;
-      allow delete: if isEditor();
+      // You can delete your own reply; the question's author can delete the
+      // replies to it (when deleting the question); editors can delete any
+      allow delete: if isSchoolUser() && (isEditor()
+        || resource.data.uid == request.auth.uid
+        || (exists(/databases/$(database)/documents/qa/$(resource.data.questionId))
+            && get(/databases/$(database)/documents/qa/$(resource.data.questionId)).data.uid == request.auth.uid));
       // Undo (may happen together with putting its question back)
       allow create: if isEditor()
         && request.resource.data.keys().hasOnly(['questionId', 'text', 'uid', 'username', 'createdAt'])

@@ -9,7 +9,9 @@
 //   users/{userId}/votes/{articleId}      { value: 1 or -1 }
 // ============================================================
 
-import { esc, formatDate } from './util.js';
+import { esc, formatDate, enterSends } from './util.js';
+import { prepareLimit, limitMessageAfterRefusal, limitText } from './limits.js';
+import { findBadLanguage, markBadLanguage, BAD_LANGUAGE } from './filter.js';
 import { showToast } from './toast.js';
 
 const COMMENT_LIMIT = 500;
@@ -257,6 +259,7 @@ function mountArticle(el, article, ctx) {
 
     <section class="comments">
       <h3 class="comments-title">Comments <span id="commentCount"></span></h3>
+      ${limitText(ctx, 'comments') ? `<p class="comment-limit-note">${esc(limitText(ctx, 'comments'))}</p>` : ''}
       <form class="comment-form" id="commentForm">
         <textarea id="commentText" maxlength="${COMMENT_LIMIT}" rows="3" placeholder="Add a comment"></textarea>
         <div class="comment-form-row">
@@ -286,6 +289,8 @@ function mountArticle(el, article, ctx) {
     counter.classList.toggle('full', text.value.length >= COMMENT_LIMIT);
   });
 
+  enterSends(text, () => { if (!el.querySelector('#commentPost').disabled) el.querySelector('#commentForm').requestSubmit(); });
+
   const commentsRef = firestore.collection(db, 'articles', article.id, 'comments');
   el.querySelector('#commentForm').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -296,23 +301,46 @@ function mountArticle(el, article, ctx) {
     if (message.length > COMMENT_LIMIT) { error.textContent = `Comments can be at most ${COMMENT_LIMIT} characters.`; return; }
 
     el.querySelector('#commentPost').disabled = true;
+    const done = () => { el.querySelector('#commentPost').disabled = false; };
+    if (await findBadLanguage(message)) {
+      error.textContent = BAD_LANGUAGE;
+      markBadLanguage(text);
+      done();
+      return;
+    }
+    const limit = await prepareLimit(ctx, 'comments');
+    if (limit.message) { error.textContent = limit.message; done(); return; }
     try {
-      await firestore.addDoc(commentsRef, {
+      const batch = firestore.writeBatch(db);
+      batch.set(firestore.doc(commentsRef), {
         text: message,
         uid: ctx.profile.uid,
         username: ctx.profile.username,
         createdAt: firestore.serverTimestamp(),
       });
+      if (limit.ref) batch.set(limit.ref, limit.record);
+      await batch.commit();
       text.value = '';
       counter.textContent = `0 / ${COMMENT_LIMIT}`;
     } catch (e) {
-      error.textContent = `Your comment couldn't be posted (${e.code || e.message}).`;
+      const limitMessage = e.code === 'permission-denied' ? await limitMessageAfterRefusal(ctx, 'comments') : '';
+      error.textContent = limitMessage || `Your comment couldn't be posted (${e.code || e.message}).`;
     }
-    el.querySelector('#commentPost').disabled = false;
+    done();
   });
 
   const newestFirst = firestore.query(commentsRef, firestore.orderBy('createdAt', 'desc'));
-  const stop = firestore.onSnapshot(newestFirst, (snapshot) => {
+  let lastSnapshot = null;
+  let confirming = null;   // your own comment waiting for "Delete? Yes"
+  const stop = firestore.onSnapshot(newestFirst, (snapshot) => { lastSnapshot = snapshot; drawComments(); }, (error) => {
+    el.querySelector('#commentList').innerHTML = `<li class="comment-empty">Comments couldn't load (${esc(error.code || error.message)}).</li>`;
+  });
+
+  // Editors (in Editor Mode) can delete any comment, with Undo. Everyone can
+  // delete their own (after "Delete? Yes").
+  function drawComments() {
+    const snapshot = lastSnapshot;
+    if (!snapshot) return;
     el.querySelector('#commentCount').textContent = `(${snapshot.size})`;
     const list = el.querySelector('#commentList');
     list.innerHTML = snapshot.empty
@@ -323,13 +351,27 @@ function mountArticle(el, article, ctx) {
           return `<li class="comment">
             <div class="comment-head"><strong>${esc(c.username)}</strong> · ${esc(formatDate(when))}</div>
             <p class="comment-text">${esc(c.text)}</p>
-            ${ctx.editorMode ? `<button class="trash-btn" data-delete="${esc(doc.id)}" title="Delete this comment" aria-label="Delete this comment">${ICON_TRASH}</button>` : ''}
+            ${confirming === doc.id && !ctx.editorMode
+              ? `<span class="lost-confirm comment-confirm">Delete your comment? <button class="link-btn" data-yes="${esc(doc.id)}">Yes</button><button class="link-btn" data-no>No</button></span>`
+              : (ctx.editorMode || c.uid === ctx.profile.uid)
+                ? `<button class="trash-btn" data-delete="${esc(doc.id)}" title="Delete this comment" aria-label="Delete this comment">${ICON_TRASH}</button>` : ''}
           </li>`;
         }).join('');
 
-    // Editor Mode: delete a comment, with Undo
+    list.querySelectorAll('[data-no]').forEach((b) => b.addEventListener('click', () => { confirming = null; drawComments(); }));
+    list.querySelectorAll('[data-yes]').forEach((b) => b.addEventListener('click', async () => {
+      confirming = null;
+      try {
+        await firestore.deleteDoc(firestore.doc(commentsRef, b.dataset.yes));
+        showToast('Deleted your comment.');
+      } catch (e) {
+        showToast(`Couldn't delete it (${e.code || e.message}).`);
+        drawComments();
+      }
+    }));
     list.querySelectorAll('[data-delete]').forEach((button) => {
       button.addEventListener('click', async () => {
+        if (!ctx.editorMode) { confirming = button.dataset.delete; drawComments(); return; }
         const original = snapshot.docs.find((d) => d.id === button.dataset.delete);
         const ref = firestore.doc(commentsRef, original.id);
         const saved = original.data();
@@ -347,9 +389,7 @@ function mountArticle(el, article, ctx) {
         });
       });
     });
-  }, (error) => {
-    el.querySelector('#commentList').innerHTML = `<li class="comment-empty">Comments couldn't load (${esc(error.code || error.message)}).</li>`;
-  });
+  }
 
   return stop; // stops listening for comments when leaving this article
 }
