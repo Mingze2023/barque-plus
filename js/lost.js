@@ -17,12 +17,12 @@
 import { esc, enterSends } from './util.js';
 import { showToast } from './toast.js';
 import { openModal, closeModal } from './modal.js';
-import { pacificDay, nextLimit } from './qa.js';
+import { prepareLimit, limitMessageAfterRefusal, limitText } from './limits.js';
+import { findBadLanguage, markBadLanguage, BAD_LANGUAGE } from './filter.js';
 
 const LIMIT = 200;
 const MAX_AGE_DAYS = 14;
 const DAY_MS = 86400000;
-const LIMIT_MESSAGE = "You've already added a lost item today. You can add another tomorrow.";
 
 const ICON_PLUS = '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
 const ICON_EDIT = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
@@ -36,16 +36,13 @@ function ageText(when) {
   return `${days} days ago`;
 }
 
-function hasDailyLimit(ctx) {
-  return !ctx.profile.isEditor;
-}
 
 // ---------- Adding and editing ----------
 function openEntryEditor(ctx, existing) {
   const editing = Boolean(existing);
   const body = openModal({
     title: editing ? 'Edit your lost item' : 'Add a lost item',
-    subtitle: editing ? '' : `Describe what was lost (or found) and where.${hasDailyLimit(ctx) ? ' You can add 1 per day.' : ''} Entries disappear after 14 days.`,
+    subtitle: editing ? '' : `Describe what was lost (or found) and where.${limitText(ctx, 'lost') ? ` ${limitText(ctx, 'lost')}` : ''} Entries disappear after 14 days.`,
     html: `
       <label class="field modal-field"><span>Description</span>
         <textarea id="lostText" rows="3" maxlength="${LIMIT}" placeholder="e.g. Blue Hydro Flask with stickers, left in the library on Tuesday"></textarea>
@@ -74,6 +71,12 @@ function openEntryEditor(ctx, existing) {
     if (value.length > LIMIT) { error.textContent = `Descriptions can be at most ${LIMIT} characters.`; return; }
     error.textContent = '';
     $('#lostSave').disabled = true;
+    if (await findBadLanguage(value)) {
+      error.textContent = BAD_LANGUAGE;
+      markBadLanguage(text);
+      $('#lostSave').disabled = false;
+      return;
+    }
     const problem = editing ? await saveEdit(ctx, existing, value) : await addEntry(ctx, value);
     if (!problem) {
       closeModal();
@@ -87,15 +90,8 @@ function openEntryEditor(ctx, existing) {
 
 async function addEntry(ctx, text) {
   const { db, firestore } = ctx.fb;
-  const limitRef = firestore.doc(db, 'users', ctx.profile.uid, 'limits', 'lost');
-  const today = pacificDay();
-  const limited = hasDailyLimit(ctx);
-  const DAILY_ENTRIES = 1;   // keep the same as dailyMax('lost') in firestore.rules
-  const readLimit = async () => {
-    try { return nextLimit(await firestore.getDoc(limitRef), today, DAILY_ENTRIES); } catch (e) { return { day: today, count: 1 }; }
-  };
-  const limitRecord = limited ? await readLimit() : null;
-  if (limited && !limitRecord) return LIMIT_MESSAGE;
+  const limit = await prepareLimit(ctx, 'lost');
+  if (limit.message) return limit.message;
 
   const batch = firestore.writeBatch(db);
   batch.set(firestore.doc(firestore.collection(db, 'lostItems')), {
@@ -104,12 +100,15 @@ async function addEntry(ctx, text) {
     username: ctx.profile.username,
     createdAt: firestore.serverTimestamp(),
   });
-  if (limited) batch.set(limitRef, limitRecord);
+  if (limit.ref) batch.set(limit.ref, limit.record);
   try {
     await batch.commit();
     return '';
   } catch (e) {
-    if (limited && e.code === 'permission-denied' && !(await readLimit())) return LIMIT_MESSAGE;
+    if (e.code === 'permission-denied') {
+      const message = await limitMessageAfterRefusal(ctx, 'lost');
+      if (message) return message;
+    }
     return `It couldn't be added (${e.code || e.message}).`;
   }
 }

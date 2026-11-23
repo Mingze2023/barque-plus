@@ -119,6 +119,23 @@ Button names on GitHub and Firebase sometimes change slightly; look for the clos
 41. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
 42. **Add a poll** in Editor Mode: click **Add Poll** under the Lost Items tab (on any page), paste the Microsoft Forms link (in Forms: **Collect responses** → **Copy link**; make sure it's set so people at your school can respond), and type the name. Adding another poll replaces it; **Remove Poll** takes it down.
 
+## Part N: Language filter, daily limits, Teachers and Club Leaders (Steps 14–16)
+
+43. **Publish the new rules** (Firestore Database → Rules → paste `firestore.rules` → **Publish**).
+44. **Language filter:** comments, questions, replies and lost items are checked before they're sent. The word list is `filter/bad-words.txt`: open it in VS Code to add or remove words (one per line), then commit and push. The notes at the top of that file explain `*` (also catch inside longer words) and `!` (always allow a word).
+45. **Daily limits** (reset at midnight, Bellevue time), enforced by the rules:
+
+    | | News comments | Q&A questions + replies | Lost items |
+    |---|---|---|---|
+    | Students, Club Leaders | 5 | 5 | 1 |
+    | Teachers | unlimited | unlimited | 1 |
+    | Editors | unlimited | unlimited | unlimited |
+
+    To change a number, change it in both `js/limits.js` (DAILY) and `firestore.rules` (dailyMax).
+46. **Teachers / Club Leaders:** on **Set Profile Types**, type the email and `teacher` or `club leader`. For a club leader, pick their club from the drop-down. They see the change the next time they log in or reload.
+47. **Club Leaders** get an **Edit Mode** switch. With it on, on their own club's page they can click the text to edit it or click the picture to upload a new one. The rules stop them from changing any other club.
+48. **Everyone can delete their own** comments, questions, replies and lost items (trash bin → "Delete? Yes"), without Editor Mode.
+
 **Email verification switch:** email verification is currently turned **on** (`REQUIRE_EMAIL_VERIFICATION` in `js/account.js` and `verificationRequired()` in `firestore.rules`). To turn it off (for example, if school email stops receiving the emails), set both to `false` and publish the rules.
 
 ## If something doesn't work

@@ -140,13 +140,24 @@ let firebase = null;
 function showLoggedIn(profile) {
   loggedIn = true;
   if (isTheme(profile.theme)) applyTheme(profile.theme);   // the account's saved season theme
-  ctx = { fb: firebase, profile, editorMode: false };
+  // editorMode: an Editor with the switch on.
+  // clubEditMode: a Club Leader with the switch on (only edits their own club).
+  ctx = { fb: firebase, profile, editorMode: false, clubEditMode: false };
   document.body.classList.remove('checking', 'logged-out', 'editor-mode');
   document.body.classList.add('logged-in');
   document.getElementById('profileName').textContent = profile.username;
   const typeLabel = document.getElementById('profileType');
   typeLabel.textContent = profile.isEditor ? 'Editor' : profile.profileType;
   typeLabel.classList.toggle('is-editor', profile.isEditor);
+  // Club Leaders: "Club Leader · Chess Club"
+  if (!profile.isEditor && profile.profileType === 'Club Leader' && profile.clubId) {
+    firebase.firestore.getDoc(firebase.firestore.doc(firebase.db, 'clubs', profile.clubId)).then((snap) => {
+      if (ctx && ctx.profile === profile && snap.exists()) {
+        profile.clubName = snap.data().name;
+        typeLabel.textContent = `Club Leader · ${snap.data().name}`;
+      }
+    }).catch(() => {});
+  }
   buildNav();
   drawEditorSwitch();
   avatarChoice = profile.avatar === 'female' ? 'female' : 'male';
@@ -183,20 +194,28 @@ function openSettings() {
   }));
 }
 
-// ---------- Editor Mode switch (editors only, off by default) ----------
+// ---------- Editor Mode switch (off by default) ----------
+// Editors get "Editor Mode". Club Leaders get "Edit Mode", which only lets
+// them edit their own club on the Club Information page.
 function drawEditorSwitch() {
   const slot = document.getElementById('rightSlot');
-  if (!ctx || !ctx.profile.isEditor) { slot.innerHTML = ''; return; }
+  const leader = ctx && !ctx.profile.isEditor && ctx.profile.profileType === 'Club Leader' && ctx.profile.clubId;
+  if (!ctx || (!ctx.profile.isEditor && !leader)) { slot.innerHTML = ''; return; }
+  const name = leader ? 'Edit Mode' : 'Editor Mode';
   slot.innerHTML = `
     <label class="editor-switch">
       <input type="checkbox" id="editorModeToggle">
       <span class="switch-track"><span class="switch-thumb"></span></span>
-      <span class="switch-label">Editor Mode</span>
+      <span class="switch-label">${name}</span>
     </label>`;
+  document.querySelector('.editor-banner').textContent = leader
+    ? 'Edit Mode is on: on Club Information, click your club\'s text or picture to edit it.'
+    : 'Editor Mode is on: editing tools are showing.';
   document.getElementById('editorModeToggle').addEventListener('change', (e) => {
-    ctx.editorMode = e.target.checked;
-    document.body.classList.toggle('editor-mode', ctx.editorMode);
-    showToast(ctx.editorMode ? 'Editor Mode on' : 'Editor Mode off', { seconds: 2 });
+    if (leader) ctx.clubEditMode = e.target.checked;
+    else ctx.editorMode = e.target.checked;
+    document.body.classList.toggle('editor-mode', e.target.checked);
+    showToast(e.target.checked ? `${name} on` : `${name} off`, { seconds: 2 });
     showSection();   // redraw the page with (or without) editing tools
     if (lostItems) lostItems.refresh();
     if (dailyPoll) dailyPoll.refresh();

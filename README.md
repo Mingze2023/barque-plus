@@ -30,6 +30,9 @@ A website for Bellevue High School's student newspaper, the Barque.
 | `js/lost.js` | Lost Items tab at the top of every page |
 | `scripts/cleanup_lost_items.py` | Deletes lost items older than 14 days (daily, needs the `FIREBASE_SERVICE_ACCOUNT` secret) |
 | `js/poll.js` | Daily Poll link (Microsoft Forms) and the editors' Add Poll button |
+| `js/filter.js` | Inappropriate language filter (catches disguised spellings, whole words only) |
+| `filter/bad-words.txt` | The bad-word list: edit it to add or remove words |
+| `js/limits.js` | Daily limits for students, club leaders and teachers |
 | `js/profile-types.js` | Set Profile Types page (editors only) |
 | `js/theme.js` | Season themes (Settings → Spring, Summer, Fall, Winter); colors are in `css/style.css` |
 | `js/toast.js` | Small message at the bottom of the screen, with Undo |
