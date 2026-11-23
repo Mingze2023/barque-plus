@@ -20,7 +20,7 @@
 // edit or delete them (with Undo). Placeholder events show while
 // there are none.
 // ============================================================
-import { esc, paragraphsHTML } from './util.js';
+import { esc, linkedParagraphsHTML, linkWords, pastedTextWithLinks } from './util.js';
 import { openModal, closeModal } from './modal.js';
 import { showToast } from './toast.js';
 import { parseEventDate, describeEventDate, badgeParts, isPast } from './event-dates.js';
@@ -95,7 +95,7 @@ function arrange(events) {
 
 // First line of the body, for the preview under each title
 function preview(body) {
-  const text = String(body || '').replace(/\s+/g, ' ').trim();
+  const text = linkWords(body).replace(/\s+/g, ' ').trim();
   return text.length > 140 ? text.slice(0, 140).trim() + '…' : text;
 }
 
@@ -103,7 +103,7 @@ function openEvent(event) {
   openModal({
     title: event.title,
     subtitle: describeEventDate(event),
-    html: paragraphsHTML(event.body) || '<p><em>No details yet.</em></p>',
+    html: linkedParagraphsHTML(event.body) || '<p><em>No details yet.</em></p>',
   });
 }
 
@@ -164,7 +164,7 @@ function draw(el, events, usingPlaceholders, ctx) {
 export function parseEvent(text) {
   const lines = String(text || '').replace(/\r/g, '').split('\n');
   while (lines.length && !lines[0].trim()) lines.shift();
-  const title = (lines.shift() || '').trim();
+  const title = linkWords(lines.shift() || '').trim();   // the name never keeps link addresses
   const body = lines.join('\n').replace(/^\s*\n/, '').trim();
   return { title, body };
 }
@@ -192,7 +192,8 @@ function openEventEditor(ctx, existing = null) {
       </label>
       <div class="paste-preview" id="datePreview"></div>
       <p class="modal-hint">Paste a section of an email. The <strong>first line</strong> becomes the event name;
-        everything after it is shown when the event is clicked. Leave a blank line between paragraphs.</p>
+        everything after it is shown when the event is clicked. Leave a blank line between paragraphs.
+        Links are kept: they show here as <code>[words](address)</code> and become clickable on the event.</p>
       <textarea class="paste-box" id="eventPaste" rows="9" placeholder="Winter Club Fair&#10;&#10;Come explore more than 60 clubs..."></textarea>
       <div class="paste-preview" id="eventPreview"></div>
       <p class="form-error" id="eventError" role="alert"></p>
@@ -222,6 +223,17 @@ function openEventEditor(ctx, existing = null) {
   }
   dateBox.addEventListener('input', () => { error.textContent = ''; showDatePreview(); });
   paste.addEventListener('input', () => { error.textContent = ''; showNamePreview(); });
+  // Pasting from an email or web page: keep its links as [words](address)
+  paste.addEventListener('paste', (event) => {
+    const html = event.clipboardData && event.clipboardData.getData('text/html');
+    if (!html || !/<a\s[^>]*href/i.test(html)) return;   // no links: paste normally
+    const text = pastedTextWithLinks(html);
+    if (!text) return;
+    event.preventDefault();
+    const start = paste.selectionStart;
+    paste.setRangeText(text, start, paste.selectionEnd, 'end');
+    paste.dispatchEvent(new Event('input'));
+  });
   showDatePreview();
   showNamePreview();
   dateBox.focus();

@@ -148,6 +148,8 @@ function showLoggedIn(profile) {
   document.getElementById('profileName').textContent = profile.username;
   const typeLabel = document.getElementById('profileType');
   typeLabel.textContent = profile.isEditor ? 'Editor' : profile.profileType;
+  typeLabel.title = '';
+  typeLabel.classList.remove('two-lines');
   typeLabel.classList.toggle('is-editor', profile.isEditor);
   // Club Leaders: "Club Leader · Chess Club"
   if (!profile.isEditor && profile.profileType === 'Club Leader' && profile.clubId) {
@@ -155,6 +157,9 @@ function showLoggedIn(profile) {
       if (ctx && ctx.profile === profile && snap.exists()) {
         profile.clubName = snap.data().name;
         typeLabel.textContent = `Club Leader · ${snap.data().name}`;
+        typeLabel.title = typeLabel.textContent;   // the whole name, if it's cut off
+        // rounder corners when it wraps onto 2 lines
+        requestAnimationFrame(() => typeLabel.classList.toggle('two-lines', typeLabel.scrollHeight > 30 || typeLabel.offsetHeight > 30));
       }
     }).catch(() => {});
   }
